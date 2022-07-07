@@ -1,0 +1,13 @@
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+statsmodels
+pvlib
+opencv-python
+jupyterlab
+pytest
+hypothesis
+click
+black

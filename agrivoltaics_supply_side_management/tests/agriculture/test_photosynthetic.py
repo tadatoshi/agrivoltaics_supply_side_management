@@ -7,32 +7,63 @@ from agrivoltaics_supply_side_management.agriculture.photosynthetic import Photo
 
 class TestPhotosyntheticModel:
 
-    def test_crop_yield_potato(self):
+    @pytest.mark.parametrize(
+        "harvest_index, biomass_energy_ratio, photosynthetically_active_radiation, " +\
+        "leaf_area_index, crop_growth_regulating_factor, number_of_days, " +\
+        "expected_crop_yield",
+        [
+            (0.95, 30, 5000 * 60 * 60 / 1000000, 5, 0.95, 4 * 30, 56)
+        ]
+    )
+    def test_crop_yield_potato_with_default_parameters(self, harvest_index,
+        biomass_energy_ratio, photosynthetically_active_radiation,
+        leaf_area_index, crop_growth_regulating_factor, number_of_days,
+        expected_crop_yield):
+        """
+        Using data from 'Table 3 Default parameters for potato' of
+        P. E. Campana, B. Stridh, S. Amaducci, and M. Colauzzi,
+        “Optimisation of vertically mounted agrivoltaic systems,”
+        Journal of Cleaner Production, vol. 325, p. 129091, Nov. 2021,
+        doi: 10.1016/j.jclepro.2021.129091.
 
-        harvest_index = 0.95
-        biomass_energy_ratio = 30
-        #  [MJ] = [kHh] * 60[min/h] * 60[sec/min] / 1000
-        photosynthetically_active_radiation = 1000 * 60 * 60 / 1000
-        leaf_area_index = 5
-        crop_growth_regulating_factor = 0.95
-        number_of_days = 1
+        Arguments
+        ---------
+        photosynthetically_active_radiation : float (will be changed to list)
+            based on 5 peak sun hours
+            with solar irradiance 1000[W/m^2] per day on a sunnay summer day
+            and [MJ] = [Wh] * 60[min/h] * 60[sec/min] / 1000000
+            1000[W/m^2] -> 5000[Wh/m^2] -> 18[MJ/m^2]
+        number_of_days: integer
+            4 momths between planting and harvesting
+            with average 30 days / month
+        """
+
+        # harvest_index = 0.95
+        # biomass_energy_ratio = 30
+        # photosynthetically_active_radiation = 5000 * 60 * 60 / 1000000
+        # leaf_area_index = 5
+        # crop_growth_regulating_factor = 0.95
+        # number_of_days = 4 * 30
 
         photosynthetic_model = PhotosyntheticModel()
 
         actual_crop_yield = photosynthetic_model.crop_yield(harvest_index, biomass_energy_ratio,
                    photosynthetically_active_radiation,
                    leaf_area_index, crop_growth_regulating_factor, number_of_days)
+
+        assert actual_crop_yield == pytest.approx(expected_crop_yield, 1)
 
     @given(floats(0, 1))
     def test_crop_yield_potato_with_property(self, harvest_index):
         # assume(harvest_index >= 0 and harvest_index <=1)
 
         biomass_energy_ratio = 30
-        #  [MJ] = [kHh] * 60[min/h] * 60[sec/min] / 1000
-        photosynthetically_active_radiation = 1000 * 60 * 60 / 1000
+        #  [MJ] = [Wh] * 60[min/h] * 60[sec/min] / 1000000
+        photosynthetically_active_radiation = 5000 * 60 * 60 / 1000000
         leaf_area_index = 5
         crop_growth_regulating_factor = 0.95
-        number_of_days = 1
+        # 4 momths between planting and harvesting
+        number_of_days = 4 * 30
 
         photosynthetic_model = PhotosyntheticModel()
 
@@ -40,7 +71,11 @@ class TestPhotosyntheticModel:
                    photosynthetically_active_radiation,
                    leaf_area_index, crop_growth_regulating_factor, number_of_days)
 
-        # Good harvest is 25 tons per hectare and experienced farmers can achieve 40 to 70 tons per hectare
+        #print("actual_crop_yield:", actual_crop_yield)
+
+        # Good harvest is 25 tons per hectare and experienced farmers can
+        # achieve 40 to 70 tons per hectare
+        # per year with 2.5 to 4 momths between planting and harvesting
         # accordiing to https://wikifarmer.com/potato-harvest-yield-storage/
-        #assert actual_crop_yield <=70 # harvest_index = 1 gave 98.62176627646531
+        assert actual_crop_yield <=70
         assert actual_crop_yield >=0

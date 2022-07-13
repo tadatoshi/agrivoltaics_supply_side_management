@@ -23,9 +23,9 @@ class TestPhotosyntheticModel:
                    photosynthetically_active_radiation,
                    leaf_area_index, crop_growth_regulating_factor, number_of_days)
 
-    @given(floats())
+    @given(floats(0, 1))
     def test_crop_yield_potato_with_property(self, harvest_index):
-        assume(harvest_index >= 0 and harvest_index <=1)
+        # assume(harvest_index >= 0 and harvest_index <=1)
 
         biomass_energy_ratio = 30
         #  [MJ] = [kHh] * 60[min/h] * 60[sec/min] / 1000

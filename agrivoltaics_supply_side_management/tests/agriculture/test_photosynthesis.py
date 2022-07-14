@@ -2,10 +2,10 @@ import pytest
 from hypothesis import given, assume
 from hypothesis.strategies import floats
 
-from agrivoltaics_supply_side_management.agriculture.photosynthetic import PhotosyntheticModel
+from agrivoltaics_supply_side_management.agriculture.photosynthesis import Photosynthesis
 
 
-class TestPhotosyntheticModel:
+class TestPhotosynthesis:
 
     @pytest.mark.parametrize(
         "harvest_index, biomass_energy_ratio, photosynthetically_active_radiation, " +\
@@ -53,9 +53,9 @@ class TestPhotosyntheticModel:
         # crop_growth_regulating_factor = 0.95
         # number_of_days = 4 * 30
 
-        photosynthetic_model = PhotosyntheticModel()
+        photosynthesis = Photosynthesis()
 
-        actual_crop_yield = photosynthetic_model.crop_yield(harvest_index, biomass_energy_ratio,
+        actual_crop_yield = photosynthesis.crop_yield(harvest_index, biomass_energy_ratio,
                    photosynthetically_active_radiation,
                    leaf_area_index, crop_growth_regulating_factor, number_of_days)
 
@@ -71,9 +71,9 @@ class TestPhotosyntheticModel:
         #  [MJ] = [Wh] * 60[min/h] * 60[sec/min] / 1000000
         photosynthetically_active_radiation = 5000 * 60 * 60 / 1000000
 
-        photosynthetic_model = PhotosyntheticModel()
+        photosynthesis = Photosynthesis()
 
-        actual_crop_yield = photosynthetic_model.crop_yield(harvest_index, biomass_energy_ratio,
+        actual_crop_yield = photosynthesis.crop_yield(harvest_index, biomass_energy_ratio,
                    photosynthetically_active_radiation,
                    leaf_area_index, crop_growth_regulating_factor, number_of_days)
 

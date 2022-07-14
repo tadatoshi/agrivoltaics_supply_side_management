@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class PhotosyntheticModel:
+class Photosynthesis:
 
     def crop_yield(self, harvest_index, biomass_energy_ratio, photosynthetically_active_radiation,
                    leaf_area_index, crop_growth_regulating_factor, number_of_days):

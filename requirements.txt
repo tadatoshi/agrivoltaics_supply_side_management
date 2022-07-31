@@ -6,6 +6,7 @@ scikit-learn
 statsmodels
 pvlib
 opencv-python
+pyomo
 jupyterlab
 pytest
 hypothesis

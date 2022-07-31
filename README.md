@@ -1,11 +1,12 @@
 # Agrivoltaics Supply Side Management
 
-Optimizes Supply Side Management with Agrivoltaics (Solar sharing between Photovoltaics and Agriculture) 
-by Artificial Intelligence. 
+Optimizes Supply Side Management with Agrivoltaics (Solar sharing between 
+Photovoltaics and Agriculture) by Artificial Intelligence. 
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install agrivoltaics-supply-side-management.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install 
+agrivoltaics-supply-side-management.
 
 #### Case 1
 When using by cloning this GIT repository:
@@ -18,6 +19,20 @@ When using a package available in PyPI:
 ```bash
 pip install agrivoltaics-supply-side-management
 ```
+
+#### Solvers
+We use Python library for mathematical optimization, called Pyomo. 
+As in any mathematical optimization tool, it requires a solver. 
+
+For Linear Programming, glpk is used as a solver by default following Pyomo 
+tutorial. 
+
+In Macintosh, install it through Homebrew:
+```bash
+brew install glpk
+```
+
+For other platforms, see https://www.gnu.org/software/glpk/
 
 ## Usage
 

@@ -6,6 +6,7 @@ scikit-learn
 statsmodels
 tensorflow
 tensorflow-probability
+pymc3
 pvlib
 opencv-python
 pyomo

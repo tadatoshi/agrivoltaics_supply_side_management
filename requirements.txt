@@ -4,6 +4,8 @@ matplotlib
 seaborn
 scikit-learn
 statsmodels
+tensorflow
+tensorflow-probability
 pvlib
 opencv-python
 pyomo

@@ -55,4 +55,6 @@ For other platforms, see https://www.gnu.org/software/glpk/
 [3] B. Willockx, B. Uytterhaegen, B. Ronsijn, B. Herteleer, and J. Cappelle, 
     “A standardized classification and performance indicators of agrivoltaic 
     systems.,” Oct. 2020. doi: 10.4229/EUPVSEC20202020-6CV.2.47.
+[4] H-W, Heldt, ”Plant Biochemistry,” Elsevier Academic Press, 
+    Burlington, MA, USA, 2005.
 

@@ -1,18 +1,19 @@
 import pytest
 import pyomo.environ as pyo
 
-from agrivoltaics_supply_side_management.optimization.convex_optimization import ConvexOptimization
+from agrivoltaics_supply_side_management.optimization.convex_optimization\
+    import ConvexOptimization
 
 
 class TestConvexOptimization:
 
     @pytest.mark.parametrize(
-        "light_saturation_point",
+        "irradiance, light_saturation_point",
         [
-            (250)
+            (1000, 250)
         ]
     )
-    def test_optimize(self, light_saturation_point):
+    def test_optimize(self, irradiance, light_saturation_point):
         """
         Arguments
         ---------
@@ -23,7 +24,8 @@ class TestConvexOptimization:
 
         """
         convex_optimization = ConvexOptimization()
-        pv_result, crop_result = convex_optimization.optimize(light_saturation_point)
+        pv_result, crop_result = convex_optimization.optimize(irradiance,
+                                            light_saturation_point)
 
         assert pv_result == 750
         assert crop_result == 250

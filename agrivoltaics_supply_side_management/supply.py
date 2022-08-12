@@ -2,13 +2,20 @@
 Temporarily created to express supply pattern in order to figure out the
 model to describe what is needed.
 """
+from abc import abstractmethod
 from datetime import datetime, time
+
+from agrivoltaics_supply_side_management.agriculture.crops import Cultivation
+from agrivoltaics_supply_side_management.photovoltaics.pv_modules \
+    import ElectricityGeneration
+from agrivoltaics_supply_side_management.solar_irradiation.irradiance \
+    import IrradianceManager
 
 
 class SupplyStrategy:
 
-    @staticmethod
-    def create(date_time: datetime):
+    @classmethod
+    def get_supply_strategy(cls, date_time: datetime):
         """
         Factory method to create SupplyStrategy instance.
 
@@ -16,33 +23,102 @@ class SupplyStrategy:
         we only look at the time during Daylight Saving Time.
         """
         if time(8, 0, 0) <= date_time.time() < time(10, 0, 0):
-            return MorningSupplyStrategy()
+            if ((not hasattr(cls, '_morning_supply_strategy')) or
+                    (cls._morning_supply_strategy is None)):
+                cls._morning_supply_strategy = MorningSupplyStrategy()
+            return cls._morning_supply_strategy
         elif time(10, 0, 0) <= date_time.time() < time(15, 0, 0):
-            return MiddaySupplyStrategy()
+            if ((not hasattr(cls, '_midday_supply_strategy')) or
+                    (cls._midday_supply_strategy is None)):
+                cls._midday_supply_strategy = MiddaySupplyStrategy()
+            return cls._midday_supply_strategy
         elif time(15, 0, 0) <= date_time.time() < time(18, 0, 0):
-            return AfternoonSupplyStrategy()
+            if ((not hasattr(cls, '_afternoon_supply_strategy')) or
+                    (cls._afternoon_supply_strategy == None)):
+                cls._afternoon_supply_strategy = AfternoonSupplyStrategy()
+            return cls._afternoon_supply_strategy
         else:
-            return DefaultSupplyStrategy()
+            if ((not hasattr(cls, '_default_supply_strategy')) or
+                    (cls._default_supply_strategy == None)):
+                cls._default_supply_strategy = DefaultSupplyStrategy()
+            return cls._default_supply_strategy
 
+    @property
+    def irradiance_manager(self):
+        self._irradiance_manager
+
+    @irradiance_manager.setter
+    def irradiance_manager(self, value):
+        self._irradiance_manager = value
+
+    @property
+    def optimiization(self):
+        self._optimization
+
+    @optimiization.setter
+    def optimization(self, value):
+        self._optimization = value
+
+    @abstractmethod
     def supply(self):
         pass
 
 
 class MorningSupplyStrategy(SupplyStrategy):
-    def supply(self):
-        pass
+
+    def __init__(self):
+        self._electricity_generation = ElectricityGeneration()
+
+    def supply(self, date_time: datetime):
+        irradiance = self._irradiance_manager.get_irradiance(date_time)
+        self._electricity_generation.consume_light_power(irradiance)
+
+        return self._electricity_generation.produce_electric_power()
 
 
 class MiddaySupplyStrategy(SupplyStrategy):
-    def supply(self):
-        pass
+
+    def __init__(self):
+        self._electricity_generation = ElectricityGeneration()
+        self._cultivation = Cultivation()
+
+    def supply(self, date_time: datetime):
+        irradiance = self._irradiance_manager.get_irradiance(date_time)
+        light_saturation_point = self._cultivation.light_saturation_point()
+
+        pv_irradiance, crop_irradiance = self._optimization.optimize(
+            irradiance, light_saturation_point)
+
+        # allcate irradiance to electricity_generation and cultivation
+        self._electricity_generation.consume_light_power(pv_irradiance)
+        self._cultivation.consume_light_power(crop_irradiance)
+
+        return self._electricity_generation.produce_electric_power()
 
 
 class AfternoonSupplyStrategy(SupplyStrategy):
-    def supply(self):
-        pass
+
+    def __init__(self):
+        self._electricity_generation = ElectricityGeneration()
+
+    def supply(self, date_time: datetime):
+        irradiance = self._irradiance_manager.get_irradiance(date_time)
+
+        self._electricity_generation.consume_light_power(irradiance)
+
+        return self._electricity_generation.produce_electric_power()
 
 
 class DefaultSupplyStrategy:
-    def supply(self):
-        pass
+
+    def __init__(self):
+        self._electricity_generation = ElectricityGeneration()
+        self._cultivation = Cultivation()
+
+    def supply(self, date_time: datetime):
+
+        # Use optimization code to allcate irradiance to
+        # electricity_generation and cultivation
+
+
+        return self._electricity_generation.produce_electric_power()

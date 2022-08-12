@@ -8,14 +8,17 @@ from datetime import datetime, time
 from agrivoltaics_supply_side_management.agriculture.crops import Cultivation
 from agrivoltaics_supply_side_management.photovoltaics.pv_modules \
     import ElectricityGeneration
-from agrivoltaics_supply_side_management.solar_irradiation.irradiance \
-    import IrradianceManager
 
 
 class SupplyStrategy:
 
+    def __init__(self, irradiance_manager, optimization):
+        self._irradiance_manager = irradiance_manager
+        self._optimization = optimization
+
     @classmethod
-    def get_supply_strategy(cls, date_time: datetime):
+    def get_supply_strategy(cls, irradiance_manager, optimization,
+                            date_time: datetime):
         """
         Factory method to create SupplyStrategy instance.
 
@@ -25,39 +28,27 @@ class SupplyStrategy:
         if time(8, 0, 0) <= date_time.time() < time(10, 0, 0):
             if ((not hasattr(cls, '_morning_supply_strategy')) or
                     (cls._morning_supply_strategy is None)):
-                cls._morning_supply_strategy = MorningSupplyStrategy()
+                cls._morning_supply_strategy = MorningSupplyStrategy(
+                    irradiance_manager, optimization)
             return cls._morning_supply_strategy
         elif time(10, 0, 0) <= date_time.time() < time(15, 0, 0):
             if ((not hasattr(cls, '_midday_supply_strategy')) or
                     (cls._midday_supply_strategy is None)):
-                cls._midday_supply_strategy = MiddaySupplyStrategy()
+                cls._midday_supply_strategy = MiddaySupplyStrategy(
+                    irradiance_manager, optimization)
             return cls._midday_supply_strategy
         elif time(15, 0, 0) <= date_time.time() < time(18, 0, 0):
             if ((not hasattr(cls, '_afternoon_supply_strategy')) or
                     (cls._afternoon_supply_strategy == None)):
-                cls._afternoon_supply_strategy = AfternoonSupplyStrategy()
+                cls._afternoon_supply_strategy = AfternoonSupplyStrategy(
+                    irradiance_manager, optimization)
             return cls._afternoon_supply_strategy
         else:
             if ((not hasattr(cls, '_default_supply_strategy')) or
                     (cls._default_supply_strategy == None)):
-                cls._default_supply_strategy = DefaultSupplyStrategy()
+                cls._default_supply_strategy = DefaultSupplyStrategy(
+                    irradiance_manager, optimization)
             return cls._default_supply_strategy
-
-    @property
-    def irradiance_manager(self):
-        self._irradiance_manager
-
-    @irradiance_manager.setter
-    def irradiance_manager(self, value):
-        self._irradiance_manager = value
-
-    @property
-    def optimiization(self):
-        self._optimization
-
-    @optimiization.setter
-    def optimization(self, value):
-        self._optimization = value
 
     @abstractmethod
     def supply(self):
@@ -66,7 +57,8 @@ class SupplyStrategy:
 
 class MorningSupplyStrategy(SupplyStrategy):
 
-    def __init__(self):
+    def __init__(self, irradiance_manager, optimization):
+        super().__init__(irradiance_manager, optimization)
         self._electricity_generation = ElectricityGeneration()
 
     def supply(self, date_time: datetime):
@@ -78,7 +70,8 @@ class MorningSupplyStrategy(SupplyStrategy):
 
 class MiddaySupplyStrategy(SupplyStrategy):
 
-    def __init__(self):
+    def __init__(self, irradiance_manager, optimization):
+        super().__init__(irradiance_manager, optimization)
         self._electricity_generation = ElectricityGeneration()
         self._cultivation = Cultivation()
 
@@ -98,7 +91,8 @@ class MiddaySupplyStrategy(SupplyStrategy):
 
 class AfternoonSupplyStrategy(SupplyStrategy):
 
-    def __init__(self):
+    def __init__(self, irradiance_manager, optimization):
+        super().__init__(irradiance_manager, optimization)
         self._electricity_generation = ElectricityGeneration()
 
     def supply(self, date_time: datetime):
@@ -109,16 +103,22 @@ class AfternoonSupplyStrategy(SupplyStrategy):
         return self._electricity_generation.produce_electric_power()
 
 
-class DefaultSupplyStrategy:
+class DefaultSupplyStrategy(SupplyStrategy):
 
-    def __init__(self):
+    def __init__(self, irradiance_manager, optimization):
+        super().__init__(irradiance_manager, optimization)
         self._electricity_generation = ElectricityGeneration()
         self._cultivation = Cultivation()
 
     def supply(self, date_time: datetime):
+        irradiance = self._irradiance_manager.get_irradiance(date_time)
+        light_saturation_point = self._cultivation.light_saturation_point()
 
-        # Use optimization code to allcate irradiance to
-        # electricity_generation and cultivation
+        pv_irradiance, crop_irradiance = self._optimization.optimize(
+            irradiance, light_saturation_point)
 
+        # allcate irradiance to electricity_generation and cultivation
+        self._electricity_generation.consume_light_power(pv_irradiance)
+        self._cultivation.consume_light_power(crop_irradiance)
 
         return self._electricity_generation.produce_electric_power()

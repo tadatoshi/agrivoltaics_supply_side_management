@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from agrivoltaics_supply_side_management.solar_irradiation.clearsky import get_clearsky
+
 
 class IrradianceManager:
     """
@@ -19,9 +21,12 @@ class IrradianceManager:
         #         times
         # Step 3: Hold the irradiance data as member field
 
+        # Temporarily use clearsky model.
+        # TODO: Implement the logic to select various irradiance model
+        clearsky_irradiaces = get_clearsky(lattitude, longitude,
+                                         timezone, times)
+        self._irradiace_data = clearsky_irradiaces['ghi']
+
     def get_irradiance(self, date_time: datetime):
 
-        # TODO: Get irradiance from irradiance data:
-        # For now, return hardcoded value in order to make the rest of
-        # codiing going:
-        return 1000
+        return self._irradiace_data.loc[date_time]

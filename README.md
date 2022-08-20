@@ -57,4 +57,6 @@ For other platforms, see https://www.gnu.org/software/glpk/
     systems.,” Oct. 2020. doi: 10.4229/EUPVSEC20202020-6CV.2.47.
 [4] H-W, Heldt, ”Plant Biochemistry,” Elsevier Academic Press, 
     Burlington, MA, USA, 2005.
-
+[5] R. W. Langhans and T. W. Tibbits, “Plant Growth Chamber Handbook 
+    - Chapter 1 Radiation,” in Plant Growth Chamber Handbook, 
+    Iowa State University, 1997.

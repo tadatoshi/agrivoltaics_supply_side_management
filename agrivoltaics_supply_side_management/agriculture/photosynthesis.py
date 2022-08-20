@@ -22,7 +22,7 @@ class Photosynthesis:
         photosynthetically_active_radiation : float (will be changed to list)
             [MJ/m^2]
             Based on 5 peak sun hours
-            with solar irradiance 1000[W/m^2] per day on a sunnay summer day
+            with solar irradiance 1000[W/m^2] per day on a sunny summer day
             and [MJ] = [Wh] * 60[min/h] * 60[sec/min] / 1000000
             1000[W/m^2] -> 5000[Wh/m^2] -> 18[MJ/m^2]
         number_of_days: integer

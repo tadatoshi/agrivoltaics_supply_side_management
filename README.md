@@ -60,3 +60,7 @@ For other platforms, see https://www.gnu.org/software/glpk/
 [5] R. W. Langhans and T. W. Tibbits, “Plant Growth Chamber Handbook 
     - Chapter 1 Radiation,” in Plant Growth Chamber Handbook, 
     Iowa State University, 1997.
+[6] O. A. Martin, R. Kumar, and J. Lao, "Bayesian Modeling and Computation 
+    in Python," Boca Ratón, 2021. 
+    [Online]. Available: https://bayesiancomputationbook.com
+

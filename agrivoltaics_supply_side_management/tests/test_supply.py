@@ -97,16 +97,24 @@ class TestSupply:
                                  electricity_generation, cultivation,
                                  times):
         total_electricity_supply = 0
+        total_crop_yield = 0
 
         for time in times:
             supply_strategy = SupplyStrategy.get_supply_strategy(
                 irradiance_manager, optimization,
                 electricity_generation, cultivation, time)
-            total_electricity_supply += supply_strategy.supply(time)
+            electricity_supply, crop_yield = supply_strategy.supply(time)
+            total_electricity_supply += electricity_supply
+            total_crop_yield += crop_yield
 
         # TODO: Assert with actual value
         #       (Note: Result was 159773.09463248006):
         assert total_electricity_supply > 0
+        # total_crop_yield was 0.0019244353818448326, which has reasonable
+        # value, since
+        # 0.0019244353818448326[(kg/m^2)/day] * 120 * 10000 / 1000
+        # = 2.309322458213799[(ton/ha)/year]
+        assert total_crop_yield == pytest.approx(0.002, abs=1e-4)
 
     class TestMiddaySupplyStrategy:
 
@@ -119,6 +127,12 @@ class TestSupply:
             date_time = datetime(2022, 7, 6, 12, 0, 0,
                                  tzinfo=ZoneInfo(timezone))
 
-            electricity_supply = supply_strategy.supply(date_time)
+            electricity_supply, crop_yield = supply_strategy.supply(date_time)
 
             assert electricity_supply == pytest.approx(268, 1)
+            # crop_yield was 3.903778248443419e-06, which may be a little big but
+            # OK, since it gives the same order of magnitude in [(ton/ha)/year]:
+            # 3.903778248443419e-06[(kg/m^2)/min] * 60 * 5 * 120 * 10000 / 1000
+            # = 6.745728813310228[(ton/ha)/year]
+            # Note: Peak solar hours of 5 is used in the calculation above.
+            assert crop_yield == pytest.approx(4e-6, abs=1e-7)

@@ -63,4 +63,8 @@ For other platforms, see https://www.gnu.org/software/glpk/
 [6] O. A. Martin, R. Kumar, and J. Lao, "Bayesian Modeling and Computation 
     in Python," Boca Ratón, 2021. 
     [Online]. Available: https://bayesiancomputationbook.com
-
+[7] R. Retkute, S. E. Smith-Unna, R. W. Smith, A. J. Burgess, O. E. Jensen, 
+    G. N. Johnson, S. P. Preston, E. H. Murchie, ”Exploiting heterogeneous 
+    environments: does photosynthetic acclimation optimize carbon gain in 
+    fluctuating light?,” Journal of Experimental Botany, May 2015, vol. 66, 
+    no. 9, pp. 2437–2447, doi: 10.1093/jxb/erv055.

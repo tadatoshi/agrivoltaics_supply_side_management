@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import pandas as pd
 
 from agrivoltaics_supply_side_management.agriculture.photosynthetic_rate import PhotosyntheticRate
 from agrivoltaics_supply_side_management.supply.strategy_factory import SupplyStrategyFactory
@@ -25,20 +26,22 @@ class Configuration:
     def light_saturation_point(self):
         pass
 
-    def supply(self, times):
+    def supply(self, time_range):
 
         self._cultivation.light_saturation_point\
             = self.light_saturation_point()
 
+        duration_in_sec = pd.to_timedelta(time_range.freq).total_seconds()
+
         total_electricity_supply = 0
         total_crop_yield = 0
 
-        for time in times:
+        for time in time_range:
             supply_strategy = self.supply_strategy_factory(
                 ).get_supply_strategy(
                     self._irradiance_manager, self._optimization,
                     self._electricity_generation, self._cultivation, time)
-            electricity_supply, crop_yield = supply_strategy.supply(time)
+            electricity_supply, crop_yield = supply_strategy.supply(time, duration_in_sec)
             total_electricity_supply += electricity_supply
             total_crop_yield += crop_yield
 

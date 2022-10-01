@@ -13,7 +13,7 @@ class SupplyStrategy:
         self._optimization = optimization
 
     @abstractmethod
-    def supply(self):
+    def supply(self, date_time: datetime, duration_in_sec):
         pass
 
 
@@ -24,7 +24,7 @@ class MorningSupplyStrategy(SupplyStrategy):
         super().__init__(irradiance_manager, optimization)
         self._electricity_generation = electricity_generation
 
-    def supply(self, date_time: datetime):
+    def supply(self, date_time: datetime, duration_in_sec):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
         self._electricity_generation.consume_light_power(irradiance)
 
@@ -39,7 +39,7 @@ class MiddaySupplyStrategy(SupplyStrategy):
         self._electricity_generation = electricity_generation
         self._cultivation = cultivation
 
-    def supply(self, date_time: datetime):
+    def supply(self, date_time: datetime, duration_in_sec):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
         light_saturation_point = self._cultivation.light_saturation_point
 
@@ -51,7 +51,7 @@ class MiddaySupplyStrategy(SupplyStrategy):
         self._cultivation.consume_light_power(crop_irradiance)
 
         return (self._electricity_generation.produce_electric_power(),
-                self._cultivation.produce())
+                self._cultivation.produce(duration_in_sec))
 
 
 class AfternoonSupplyStrategy(SupplyStrategy):
@@ -61,7 +61,7 @@ class AfternoonSupplyStrategy(SupplyStrategy):
         super().__init__(irradiance_manager, optimization)
         self._electricity_generation = electricity_generation
 
-    def supply(self, date_time: datetime):
+    def supply(self, date_time: datetime, duration_in_sec):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
 
         self._electricity_generation.consume_light_power(irradiance)
@@ -77,7 +77,7 @@ class DefaultSupplyStrategy(SupplyStrategy):
         self._electricity_generation = electricity_generation
         self._cultivation = cultivation
 
-    def supply(self, date_time: datetime):
+    def supply(self, date_time: datetime, duration_in_sec):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
         light_saturation_point = self._cultivation.light_saturation_point
 
@@ -89,4 +89,4 @@ class DefaultSupplyStrategy(SupplyStrategy):
         self._cultivation.consume_light_power(crop_irradiance)
 
         return (self._electricity_generation.produce_electric_power(),
-                self._cultivation.produce())
+                self._cultivation.produce(duration_in_sec))

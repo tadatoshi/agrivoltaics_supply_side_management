@@ -23,3 +23,7 @@ class UnitConversion:
         assert value_ton_per_ha >= 0.0
 
         return value_ton_per_ha * 1000 / 100000
+
+    @staticmethod
+    def pandas_freq_to_duration_in_sec(freq):
+        pd.to_timedelta(freq).total_seconds()

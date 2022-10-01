@@ -10,21 +10,21 @@ class IrradianceManager:
     And gives the irradiance based on the specified time.
     """
 
-    def __init__(self, lattitude, longitude, timezone, times):
+    def __init__(self, lattitude, longitude, timezone, time_range):
         self._lattitude = lattitude
         self._longitude = longitude
         self._timezone = timezone
-        self._times = times
+        self._time_range = time_range
 
         # Step 1: Logic to select appropriate irradiance model.
-        # Step 2: Use the model to get irradiance data for the givee
-        #         times
+        # Step 2: Use the model to get irradiance data for the given
+        #         time_range
         # Step 3: Hold the irradiance data as member field
 
         # Temporarily use clearsky model.
         # TODO: Implement the logic to select various irradiance model
         clearsky_irradiaces = get_clearsky(lattitude, longitude,
-                                         timezone, times)
+                                           timezone, time_range)
         self._irradiace_data = clearsky_irradiaces['ghi']
 
     def get_irradiance(self, date_time: datetime):

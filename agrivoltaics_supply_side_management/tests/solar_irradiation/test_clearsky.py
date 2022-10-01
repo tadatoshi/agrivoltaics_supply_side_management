@@ -11,10 +11,10 @@ class TestClearsky:
 
         lattitude, longitude = 49.26757152616243, -123.25266177347093
         timezone = 'Canada/Pacific'
-        times = pd.date_range('2022-07-06', '2022-07-07', freq='1T',
+        time_range = pd.date_range('2022-07-06', '2022-07-07', freq='1T',
                               tz=timezone)
 
-        clearsky = get_clearsky(lattitude, longitude, timezone, times)
+        clearsky = get_clearsky(lattitude, longitude, timezone, time_range)
 
         assert type(clearsky) is pd.DataFrame
 

@@ -21,14 +21,14 @@ class TestVerticalPvConfiguration:
         return 'Canada/Pacific'
 
     @pytest.fixture()
-    def times(self, timezone):
+    def time_range(self, timezone):
         return pd.date_range('2022-07-06', '2022-07-07', freq='1T',
                              tz=timezone)
 
     @pytest.fixture()
-    def irradiance_manager(self, location_data, timezone, times):
+    def irradiance_manager(self, location_data, timezone, time_range):
         lattitude, longitude = location_data[0], location_data[1]
-        return IrradianceManager(lattitude, longitude, timezone, times)
+        return IrradianceManager(lattitude, longitude, timezone, time_range)
 
     @pytest.fixture()
     def optimization(self):
@@ -45,9 +45,7 @@ class TestVerticalPvConfiguration:
         leaf_area_index = 5
         crop_growth_regulating_factor = 0.95
         duration_in_sec = 60 # 1[min]
-        return Cultivation(harvest_index, biomass_energy_ratio,
-                           leaf_area_index, crop_growth_regulating_factor,
-                           duration_in_sec)
+        return Cultivation(harvest_index, biomass_energy_ratio, leaf_area_index, crop_growth_regulating_factor)
 
     @pytest.mark.parametrize(
         "phi, alpha, theta, p_max",
@@ -57,7 +55,7 @@ class TestVerticalPvConfiguration:
     )
     def test_supply(self, phi, alpha, theta, p_max,
                     irradiance_manager, optimization, electricity_generation,
-                    cultivation, times):
+                    cultivation, time_range):
 
         net_photosynthetic_rate_parameters = {
             "phi": phi,
@@ -73,7 +71,7 @@ class TestVerticalPvConfiguration:
             irradiance_manager, optimization, electricity_generation,
             cultivation)
 
-        electricity_supply, crop_yield = configuration.supply(times)
+        electricity_supply, crop_yield = configuration.supply(time_range)
 
         # TODO: Assert with actual value
         #       (Note: Result was 65816.26368455126):

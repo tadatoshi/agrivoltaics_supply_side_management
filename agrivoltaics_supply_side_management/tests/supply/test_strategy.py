@@ -10,9 +10,10 @@ from agrivoltaics_supply_side_management.photovoltaics.pv_modules \
     import ElectricityGeneration
 from agrivoltaics_supply_side_management.solar_irradiation.irradiance \
     import IrradianceManager
-from agrivoltaics_supply_side_management.supply.strategy import SupplyStrategy, \
+from agrivoltaics_supply_side_management.supply.strategy import \
     MiddaySupplyStrategy
-from agrivoltaics_supply_side_management.supply.strategy_factory import SupplyStrategyFactory
+from agrivoltaics_supply_side_management.supply.strategy_factory\
+    import SupplyStrategyFactory
 
 
 class TestSupply:
@@ -27,14 +28,14 @@ class TestSupply:
         return 'Canada/Pacific'
 
     @pytest.fixture()
-    def times(self, timezone):
+    def time_range(self, timezone):
         return pd.date_range('2022-07-06', '2022-07-07', freq='1T',
                              tz=timezone)
 
     @pytest.fixture()
-    def irradiance_manager(self, location_data, timezone, times):
+    def irradiance_manager(self, location_data, timezone, time_range):
         lattitude, longitude = location_data[0], location_data[1]
-        return IrradianceManager(lattitude, longitude, timezone, times)
+        return IrradianceManager(lattitude, longitude, timezone, time_range)
 
     @pytest.fixture()
     def optimization(self):
@@ -52,22 +53,24 @@ class TestSupply:
         crop_growth_regulating_factor = 0.95
         duration_in_sec = 60 # 1[min]
         return Cultivation(harvest_index, biomass_energy_ratio,
-                           leaf_area_index, crop_growth_regulating_factor,
-                           duration_in_sec)
+                           leaf_area_index, crop_growth_regulating_factor)
 
     def test_supply_over_one_day(self, irradiance_manager, optimization,
                                  electricity_generation, cultivation,
-                                 times):
+                                 time_range):
         supply_strategy_factory = SupplyStrategyFactory()
+
+        duration_in_sec = pd.to_timedelta(time_range.freq).total_seconds()
 
         total_electricity_supply = 0
         total_crop_yield = 0
 
-        for time in times:
+        for time in time_range:
             supply_strategy = supply_strategy_factory.get_supply_strategy(
                 irradiance_manager, optimization,
                 electricity_generation, cultivation, time)
-            electricity_supply, crop_yield = supply_strategy.supply(time)
+            electricity_supply, crop_yield = supply_strategy.supply(
+                                                    time, duration_in_sec)
             total_electricity_supply += electricity_supply
             total_crop_yield += crop_yield
 
@@ -90,8 +93,10 @@ class TestSupply:
 
             date_time = datetime(2022, 7, 6, 12, 0, 0,
                                  tzinfo=ZoneInfo(timezone))
+            duration_in_sec = 60  # 1[min]
 
-            electricity_supply, crop_yield = supply_strategy.supply(date_time)
+            electricity_supply, crop_yield = supply_strategy.supply(
+                                                date_time, duration_in_sec)
 
             assert electricity_supply == pytest.approx(268, 1)
             # crop_yield was 3.903778248443419e-06, which may be a little big

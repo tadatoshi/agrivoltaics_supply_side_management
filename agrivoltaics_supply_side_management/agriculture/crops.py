@@ -8,20 +8,19 @@ from agrivoltaics_supply_side_management.agriculture.unit_conversion\
 class Cultivation:
 
     def __init__(self, harvest_index, biomass_energy_ratio, leaf_area_index,
-                 crop_growth_regulating_factor, duration_in_sec):
+                 crop_growth_regulating_factor):
         self._harvest_index = harvest_index
         self._biomass_energy_ratio = biomass_energy_ratio
         self._leaf_area_index = leaf_area_index
         self._crop_growth_regulating_factor = crop_growth_regulating_factor
-        self._duration_in_sec = duration_in_sec
 
     def consume_light_power(self, irradiance):
         self._irradiance = irradiance
 
-    def produce(self):
+    def produce(self, duration_in_sec):
 
         irradiation = UnitConversion.j_to_wh(
-            self._irradiance * self._duration_in_sec)
+            self._irradiance * duration_in_sec)
         photosynthetically_active_radiation = UnitConversion.wh_to_mj(
                                                     irradiation)
 
@@ -31,10 +30,10 @@ class Cultivation:
         #           daily photosynthetically_active_radiation
         #       to
         #           continuous value of photosynthetically_active_radiation
-        if self._duration_in_sec <= 24 * 60 * 60:
+        if duration_in_sec <= 24 * 60 * 60:
             number_of_days = 1
         else:
-            number_of_days = self._duration_in_sec / (24 * 60 * 60)
+            number_of_days = duration_in_sec / (24 * 60 * 60)
 
         photosynthesis = Photosynthesis()
 

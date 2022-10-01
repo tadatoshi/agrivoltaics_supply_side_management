@@ -15,13 +15,12 @@ class TestCultivation:
         duration_in_sec):
 
         cultivation = Cultivation(harvest_index, biomass_energy_ratio,
-                            leaf_area_index, crop_growth_regulating_factor,
-                            duration_in_sec)
+                            leaf_area_index, crop_growth_regulating_factor)
 
         irradiance = 250 # Light saturation point from Figure 2 of [2]
         cultivation.consume_light_power(irradiance)
 
-        actual_crop_yield = cultivation.produce()
+        actual_crop_yield = cultivation.produce(duration_in_sec)
         #print("actual_crop_yield: ", actual_crop_yield)
 
         # Anual crop yield 5[ton/ha] (Fig.10 of [1]),

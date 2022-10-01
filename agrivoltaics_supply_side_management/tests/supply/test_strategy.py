@@ -10,7 +10,7 @@ from agrivoltaics_supply_side_management.photovoltaics.pv_modules \
     import ElectricityGeneration
 from agrivoltaics_supply_side_management.solar_irradiation.irradiance \
     import IrradianceManager
-from agrivoltaics_supply_side_management.supply import SupplyStrategy, \
+from agrivoltaics_supply_side_management.supply.strategy import SupplyStrategy, \
     MorningSupplyStrategy, MiddaySupplyStrategy, AfternoonSupplyStrategy, \
     DefaultSupplyStrategy
 

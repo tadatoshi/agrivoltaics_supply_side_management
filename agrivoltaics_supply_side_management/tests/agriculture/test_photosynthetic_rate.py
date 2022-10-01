@@ -1,6 +1,6 @@
 import pytest
+import numpy as np
 import pandas as pd
-from scipy import optimize
 
 from agrivoltaics_supply_side_management.agriculture.photosynthetic_rate\
     import PhotosyntheticRate
@@ -49,3 +49,24 @@ class TestPhotosyntheticRate:
         assert phi_2 == pytest.approx(0.05498626, abs=1e-8)
         assert alpha_2 == pytest.approx(0.12013631, abs=1e-8)
         assert theta_2 == pytest.approx(0.74425981, abs=1e-8)
+
+    @pytest.mark.parametrize(
+        "phi, alpha, theta, p_max",
+        [
+            (0.055, 0.2, 0.96, 15)
+        ]
+    )
+    def test_find_light_saturation_point(self, phi, alpha, theta, p_max):
+
+        ppfd_data = np.linspace(0, 1200)
+
+        actual_light_saturation_point = \
+            PhotosyntheticRate.find_light_saturation_point(
+                phi, alpha, theta, p_max, ppfd_data)
+
+        # From graph A of Fig. 1 of [7] (see README):
+        expected_light_saturation_point = 350
+
+        # actual_light_saturation_point was 367.3469387755102
+        assert actual_light_saturation_point == pytest.approx(
+            expected_light_saturation_point, abs=1e+2)

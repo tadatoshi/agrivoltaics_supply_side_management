@@ -5,10 +5,6 @@ model to describe what is needed.
 from abc import abstractmethod
 from datetime import datetime, time
 
-from agrivoltaics_supply_side_management.agriculture.crops import Cultivation
-from agrivoltaics_supply_side_management.photovoltaics.pv_modules \
-    import ElectricityGeneration
-
 
 class SupplyStrategy:
 

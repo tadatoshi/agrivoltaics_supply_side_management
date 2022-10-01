@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import optimize
+from kneed import KneeLocator
 
 
 class PhotosyntheticRate:
@@ -39,6 +40,20 @@ class PhotosyntheticRate:
         return phi, alpha, theta
 
     @staticmethod
+    def find_light_saturation_point(phi, alpha, theta, p_max, ppfd_data):
+
+        net_photosynthetic_rate_function =\
+            PhotosyntheticRate.get_net_photosynthetic_rate_function(p_max)
+
+        net_photosynthetic_rates = net_photosynthetic_rate_function(
+                                        ppfd_data, phi, alpha, theta)
+
+        knee_locator = KneeLocator(ppfd_data, net_photosynthetic_rates,
+                                   curve='concave', direction='increasing')
+
+        return knee_locator.knee
+
+    @staticmethod
     def get_net_photosynthetic_rate_function(p_max):
         """
         In order to specify p_max outside net_photosynthetic_rate function,
@@ -52,7 +67,7 @@ class PhotosyntheticRate:
 
             Arguments
             ---------
-            l: float
+            l: numpy array of floats
                 L - PPFD incident on a leaf
             phi: float
                 maximum quantum yield

@@ -41,6 +41,28 @@ class PhotosyntheticRate:
 
     @staticmethod
     def find_light_saturation_point(phi, alpha, theta, p_max, ppfd_data):
+        """
+        Finds light saturation point by finding elbow in net photosynthetic
+        rate curve.
+
+        Arguments
+        ---------
+        phi: float
+            maximum quantum yield
+        alpha: float
+            fraction of maximum photosynthetic capacity used
+            for dark respiration
+        theta: float
+            curvature of light-response curve
+        p_max: float
+            maximum net photosynthetic rage
+        ppfd_data: numpy array of floats
+            PPFD incident on a leaf
+
+        Returns
+        -------
+        Light saturation point: float
+        """
 
         net_photosynthetic_rate_function =\
             PhotosyntheticRate.get_net_photosynthetic_rate_function(p_max)
@@ -59,6 +81,15 @@ class PhotosyntheticRate:
         In order to specify p_max outside net_photosynthetic_rate function,
         since it is not a part of function
         variables used by scipy.optimize.curve_fit.
+
+        Arguments
+        ---------
+        p_max: float
+            maximum net photosynthetic rage
+
+        Returns
+        -------
+        net_photosynthetic_rate_function: function object
         """
 
         def net_photosynthetic_rate_function(l, phi, alpha, theta):

@@ -49,7 +49,18 @@ class Cultivation:
 
         return crop_yield
 
+    @property
     def light_saturation_point(self):
-        # Default value. Subclass for a specific crop defines a different
-        # value, e.g. soybean
-        return 250
+
+        if ((hasattr(self, '_light_saturation_point')) and
+                (self._light_saturation_point is not None)):
+            return self._light_saturation_point
+        else:
+            # Default value based on [2] (See README).
+            # Subclass for a specific crop defines a different
+            # value, e.g. soybean
+            return 250
+
+    @light_saturation_point.setter
+    def light_saturation_point(self, value):
+        self._light_saturation_point = value

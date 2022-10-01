@@ -7,8 +7,7 @@ from agrivoltaics_supply_side_management.supply.strategy\
 
 class SupplyStrategyFactory:
 
-    @classmethod
-    def get_supply_strategy(cls, irradiance_manager, optimization,
+    def get_supply_strategy(self, irradiance_manager, optimization,
                             electricity_generation, cultivation,
                             date_time: datetime):
         """
@@ -18,29 +17,29 @@ class SupplyStrategyFactory:
         we only look at the time during Daylight Saving Time.
         """
         if time(8, 0, 0) <= date_time.time() < time(10, 0, 0):
-            if ((not hasattr(cls, '_morning_supply_strategy')) or
-                    (cls._morning_supply_strategy is None)):
-                cls._morning_supply_strategy = MorningSupplyStrategy(
+            if ((not hasattr(self, '_morning_supply_strategy')) or
+                    (self._morning_supply_strategy is None)):
+                self._morning_supply_strategy = MorningSupplyStrategy(
                     irradiance_manager, optimization,
                     electricity_generation)
-            return cls._morning_supply_strategy
+            return self._morning_supply_strategy
         elif time(10, 0, 0) <= date_time.time() < time(15, 0, 0):
-            if ((not hasattr(cls, '_midday_supply_strategy')) or
-                    (cls._midday_supply_strategy is None)):
-                cls._midday_supply_strategy = MiddaySupplyStrategy(
+            if ((not hasattr(self, '_midday_supply_strategy')) or
+                    (self._midday_supply_strategy is None)):
+                self._midday_supply_strategy = MiddaySupplyStrategy(
                     irradiance_manager, optimization,
                     electricity_generation, cultivation)
-            return cls._midday_supply_strategy
+            return self._midday_supply_strategy
         elif time(15, 0, 0) <= date_time.time() < time(18, 0, 0):
-            if ((not hasattr(cls, '_afternoon_supply_strategy')) or
-                    (cls._afternoon_supply_strategy == None)):
-                cls._afternoon_supply_strategy = AfternoonSupplyStrategy(
+            if ((not hasattr(self, '_afternoon_supply_strategy')) or
+                    (self._afternoon_supply_strategy == None)):
+                self._afternoon_supply_strategy = AfternoonSupplyStrategy(
                     irradiance_manager, optimization, electricity_generation)
-            return cls._afternoon_supply_strategy
+            return self._afternoon_supply_strategy
         else:
-            if ((not hasattr(cls, '_default_supply_strategy')) or
-                    (cls._default_supply_strategy == None)):
-                cls._default_supply_strategy = DefaultSupplyStrategy(
+            if ((not hasattr(self, '_default_supply_strategy')) or
+                    (self._default_supply_strategy == None)):
+                self._default_supply_strategy = DefaultSupplyStrategy(
                     irradiance_manager, optimization,
                     electricity_generation, cultivation)
-            return cls._default_supply_strategy
+            return self._default_supply_strategy

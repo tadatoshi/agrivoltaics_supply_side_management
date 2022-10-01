@@ -58,11 +58,13 @@ class TestSupply:
     def test_supply_over_one_day(self, irradiance_manager, optimization,
                                  electricity_generation, cultivation,
                                  times):
+        supply_strategy_factory = SupplyStrategyFactory()
+
         total_electricity_supply = 0
         total_crop_yield = 0
 
         for time in times:
-            supply_strategy = SupplyStrategyFactory.get_supply_strategy(
+            supply_strategy = supply_strategy_factory.get_supply_strategy(
                 irradiance_manager, optimization,
                 electricity_generation, cultivation, time)
             electricity_supply, crop_yield = supply_strategy.supply(time)

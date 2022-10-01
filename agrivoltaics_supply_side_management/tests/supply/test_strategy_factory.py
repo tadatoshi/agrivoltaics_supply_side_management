@@ -60,37 +60,40 @@ class TestStrategyFactory:
     def test_get_supply_strategy(irradiance_manager, optimization,
                                  electricity_generation, cultivation,
                                  timezone):
+
+        supply_strategy_factory = SupplyStrategyFactory()
+
         early_morning = datetime(2022, 8, 8, 6, 0, 0,
                                  tzinfo=ZoneInfo(timezone))
-        supply_strategy_1 = SupplyStrategyFactory.get_supply_strategy(
+        supply_strategy_1 = supply_strategy_factory.get_supply_strategy(
             irradiance_manager, optimization, electricity_generation,
             cultivation, early_morning)
         assert type(supply_strategy_1) is DefaultSupplyStrategy
 
         morning = datetime(2022, 8, 8, 9, 30, 0,
                            tzinfo=ZoneInfo(timezone))
-        supply_strategy_2 = SupplyStrategyFactory.get_supply_strategy(
+        supply_strategy_2 = supply_strategy_factory.get_supply_strategy(
             irradiance_manager, optimization, electricity_generation,
             cultivation, morning)
         assert type(supply_strategy_2) is MorningSupplyStrategy
 
         midday = datetime(2022, 8, 8, 12, 0, 0,
                           tzinfo=ZoneInfo(timezone))
-        supply_strategy_3 = SupplyStrategyFactory.get_supply_strategy(
+        supply_strategy_3 = supply_strategy_factory.get_supply_strategy(
             irradiance_manager, optimization, electricity_generation,
             cultivation, midday)
         assert type(supply_strategy_3) is MiddaySupplyStrategy
 
         afternoon = datetime(2022, 8, 8, 17, 0, 0,
                              tzinfo=ZoneInfo(timezone))
-        supply_strategy_4 = SupplyStrategyFactory.get_supply_strategy(
+        supply_strategy_4 = supply_strategy_factory.get_supply_strategy(
             irradiance_manager, optimization, electricity_generation,
             cultivation, afternoon)
         assert type(supply_strategy_4) is AfternoonSupplyStrategy
 
         evening = datetime(2022, 8, 8, 19, 0, 0,
                            tzinfo=ZoneInfo(timezone))
-        supply_strategy_5 = SupplyStrategyFactory.get_supply_strategy(
+        supply_strategy_5 = supply_strategy_factory.get_supply_strategy(
             irradiance_manager, optimization, electricity_generation,
             cultivation, evening)
         assert type(supply_strategy_5) is DefaultSupplyStrategy

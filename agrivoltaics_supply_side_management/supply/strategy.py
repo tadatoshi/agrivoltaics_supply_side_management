@@ -41,7 +41,7 @@ class MiddaySupplyStrategy(SupplyStrategy):
 
     def supply(self, date_time: datetime):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
-        light_saturation_point = self._cultivation.light_saturation_point()
+        light_saturation_point = self._cultivation.light_saturation_point
 
         pv_irradiance, crop_irradiance = self._optimization.optimize(
             irradiance, light_saturation_point)
@@ -79,7 +79,7 @@ class DefaultSupplyStrategy(SupplyStrategy):
 
     def supply(self, date_time: datetime):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
-        light_saturation_point = self._cultivation.light_saturation_point()
+        light_saturation_point = self._cultivation.light_saturation_point
 
         pv_irradiance, crop_irradiance = self._optimization.optimize(
             irradiance, light_saturation_point)

@@ -11,8 +11,8 @@ from agrivoltaics_supply_side_management.photovoltaics.pv_modules \
 from agrivoltaics_supply_side_management.solar_irradiation.irradiance \
     import IrradianceManager
 from agrivoltaics_supply_side_management.supply.strategy import SupplyStrategy, \
-    MorningSupplyStrategy, MiddaySupplyStrategy, AfternoonSupplyStrategy, \
-    DefaultSupplyStrategy
+    MiddaySupplyStrategy
+from agrivoltaics_supply_side_management.supply.strategy_factory import SupplyStrategyFactory
 
 
 class TestSupply:
@@ -55,44 +55,6 @@ class TestSupply:
                            leaf_area_index, crop_growth_regulating_factor,
                            duration_in_sec)
 
-    def test_get_supply_strategy(self, irradiance_manager, optimization,
-                                 electricity_generation, cultivation,
-                                 timezone):
-        early_morning = datetime(2022, 8, 8, 6, 0, 0,
-                                 tzinfo=ZoneInfo(timezone))
-        supply_strategy_1 = SupplyStrategy.get_supply_strategy(
-            irradiance_manager, optimization, electricity_generation,
-            cultivation, early_morning)
-        assert type(supply_strategy_1) is DefaultSupplyStrategy
-
-        morning = datetime(2022, 8, 8, 9, 30, 0,
-                           tzinfo=ZoneInfo(timezone))
-        supply_strategy_2 = SupplyStrategy.get_supply_strategy(
-            irradiance_manager, optimization, electricity_generation,
-            cultivation, morning)
-        assert type(supply_strategy_2) is MorningSupplyStrategy
-
-        midday = datetime(2022, 8, 8, 12, 0, 0,
-                          tzinfo=ZoneInfo(timezone))
-        supply_strategy_3 = SupplyStrategy.get_supply_strategy(
-            irradiance_manager, optimization, electricity_generation,
-            cultivation, midday)
-        assert type(supply_strategy_3) is MiddaySupplyStrategy
-
-        afternoon = datetime(2022, 8, 8, 17, 0, 0,
-                             tzinfo=ZoneInfo(timezone))
-        supply_strategy_4 = SupplyStrategy.get_supply_strategy(
-            irradiance_manager, optimization, electricity_generation,
-            cultivation, afternoon)
-        assert type(supply_strategy_4) is AfternoonSupplyStrategy
-
-        evening = datetime(2022, 8, 8, 19, 0, 0,
-                           tzinfo=ZoneInfo(timezone))
-        supply_strategy_5 = SupplyStrategy.get_supply_strategy(
-            irradiance_manager, optimization, electricity_generation,
-            cultivation, evening)
-        assert type(supply_strategy_5) is DefaultSupplyStrategy
-
     def test_supply_over_one_day(self, irradiance_manager, optimization,
                                  electricity_generation, cultivation,
                                  times):
@@ -100,7 +62,7 @@ class TestSupply:
         total_crop_yield = 0
 
         for time in times:
-            supply_strategy = SupplyStrategy.get_supply_strategy(
+            supply_strategy = SupplyStrategyFactory.get_supply_strategy(
                 irradiance_manager, optimization,
                 electricity_generation, cultivation, time)
             electricity_supply, crop_yield = supply_strategy.supply(time)
@@ -130,9 +92,11 @@ class TestSupply:
             electricity_supply, crop_yield = supply_strategy.supply(date_time)
 
             assert electricity_supply == pytest.approx(268, 1)
-            # crop_yield was 3.903778248443419e-06, which may be a little big but
-            # OK, since it gives the same order of magnitude in [(ton/ha)/year]:
-            # 3.903778248443419e-06[(kg/m^2)/min] * 60 * 5 * 120 * 10000 / 1000
+            # crop_yield was 3.903778248443419e-06, which may be a little big
+            # but OK, since it gives the same order of magnitude in
+            # [(ton/ha)/year]:
+            # 3.903778248443419e-06[(kg/m^2)/min] * 60 * 5 * 120 * 10000
+            #     / 1000
             # = 6.745728813310228[(ton/ha)/year]
             # Note: Peak solar hours of 5 is used in the calculation above.
             assert crop_yield == pytest.approx(4e-6, abs=1e-7)

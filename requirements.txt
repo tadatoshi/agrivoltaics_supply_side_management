@@ -10,6 +10,7 @@ pymc3
 pvlib
 opencv-python
 pyomo
+kneed
 jupyterlab
 pytest
 hypothesis

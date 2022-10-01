@@ -147,7 +147,8 @@ setup(
     #install_requires=['peppercorn'],  # Optional
     install_requires=['numpy', 'pandas', 'matplotlib', 'seaborn', 'scikit-learn',
                       'statsmodels', 'tensorflow', 'tensorflow-probability',
-                      'pymc3', 'pvlib', 'opencv-python', 'pyomo', 'jupyterlab'],
+                      'pymc3', 'pvlib', 'opencv-python', 'pyomo',
+                      'kneed', 'jupyterlab'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"

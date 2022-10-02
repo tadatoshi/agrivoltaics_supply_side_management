@@ -1,7 +1,7 @@
 
 from agrivoltaics_supply_side_management.agriculture.photosynthesis\
     import Photosynthesis
-from agrivoltaics_supply_side_management.agriculture.unit_conversion\
+from agrivoltaics_supply_side_management.util.unit_conversion \
     import UnitConversion
 
 

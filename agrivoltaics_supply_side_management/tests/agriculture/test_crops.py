@@ -1,9 +1,9 @@
-import pytest
 from hypothesis import given
 from hypothesis.strategies import floats, just, sampled_from
 
 from agrivoltaics_supply_side_management.agriculture.crops import Cultivation
-from agrivoltaics_supply_side_management.agriculture.unit_conversion import UnitConversion
+from agrivoltaics_supply_side_management.util.unit_conversion\
+    import UnitConversion
 
 
 class TestCultivation:

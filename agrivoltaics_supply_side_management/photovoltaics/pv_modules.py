@@ -1,4 +1,5 @@
-
+from agrivoltaics_supply_side_management.util.unit_conversion \
+    import UnitConversion
 
 
 class ElectricityGeneration:
@@ -22,3 +23,8 @@ class ElectricityGeneration:
             return self._module_mpp * (self._irradiance / 1000)
         else:
             return self._module_mpp
+
+    def produce_electric_energy(self, duration_in_sec):
+
+        return UnitConversion.j_to_wh(
+                            self.produce_electric_power() * duration_in_sec)

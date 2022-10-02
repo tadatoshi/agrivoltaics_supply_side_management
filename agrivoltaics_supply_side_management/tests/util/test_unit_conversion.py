@@ -1,7 +1,7 @@
-import pytest
 from hypothesis import given, strategies as st
 
-from agrivoltaics_supply_side_management.agriculture.unit_conversion import UnitConversion
+from agrivoltaics_supply_side_management.util.unit_conversion\
+    import UnitConversion
 
 
 class TestUnitConversion:

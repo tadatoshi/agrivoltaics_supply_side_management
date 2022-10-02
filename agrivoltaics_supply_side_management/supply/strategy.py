@@ -28,7 +28,8 @@ class MorningSupplyStrategy(SupplyStrategy):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
         self._electricity_generation.consume_light_power(irradiance)
 
-        return self._electricity_generation.produce_electric_power(), 0
+        return self._electricity_generation.produce_electric_energy(
+                                                        duration_in_sec), 0
 
 
 class MiddaySupplyStrategy(SupplyStrategy):
@@ -50,7 +51,8 @@ class MiddaySupplyStrategy(SupplyStrategy):
         self._electricity_generation.consume_light_power(pv_irradiance)
         self._cultivation.consume_light_power(crop_irradiance)
 
-        return (self._electricity_generation.produce_electric_power(),
+        return (self._electricity_generation.produce_electric_energy(
+                                                            duration_in_sec),
                 self._cultivation.produce(duration_in_sec))
 
 
@@ -66,7 +68,8 @@ class AfternoonSupplyStrategy(SupplyStrategy):
 
         self._electricity_generation.consume_light_power(irradiance)
 
-        return self._electricity_generation.produce_electric_power(), 0
+        return self._electricity_generation.produce_electric_energy(
+                                                        duration_in_sec), 0
 
 
 class DefaultSupplyStrategy(SupplyStrategy):
@@ -88,5 +91,6 @@ class DefaultSupplyStrategy(SupplyStrategy):
         self._electricity_generation.consume_light_power(pv_irradiance)
         self._cultivation.consume_light_power(crop_irradiance)
 
-        return (self._electricity_generation.produce_electric_power(),
+        return (self._electricity_generation.produce_electric_energy(
+                                                            duration_in_sec),
                 self._cultivation.produce(duration_in_sec))

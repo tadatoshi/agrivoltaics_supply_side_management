@@ -51,7 +51,6 @@ class TestSupply:
         biomass_energy_ratio = 30
         leaf_area_index = 5
         crop_growth_regulating_factor = 0.95
-        duration_in_sec = 60 # 1[min]
         return Cultivation(harvest_index, biomass_energy_ratio,
                            leaf_area_index, crop_growth_regulating_factor)
 
@@ -74,9 +73,11 @@ class TestSupply:
             total_electricity_supply += electricity_supply
             total_crop_yield += crop_yield
 
-        # TODO: Assert with actual value
-        #       (Note: Result was 159773.09463248006):
-        assert total_electricity_supply > 0
+        # (Note: Result was 159773.09463248006[J] previously when
+        #        ElectricityGeneration.produce_electric_power was used.):
+        # total_electricity_supply was 1242.6796249192898[Wh], which has
+        # reasonable value [Wh/day].
+        assert total_electricity_supply == pytest.approx(1242, abs=1)
         # total_crop_yield was 0.0019244353818448326, which has reasonable
         # value, since
         # 0.0019244353818448326[(kg/m^2)/day] * 120 * 10000 / 1000
@@ -98,7 +99,8 @@ class TestSupply:
             electricity_supply, crop_yield = supply_strategy.supply(
                                                 date_time, duration_in_sec)
 
-            assert electricity_supply == pytest.approx(268, 1)
+            assert electricity_supply == pytest.approx(268 * duration_in_sec,
+                                                       1)
             # crop_yield was 3.903778248443419e-06, which may be a little big
             # but OK, since it gives the same order of magnitude in
             # [(ton/ha)/year]:

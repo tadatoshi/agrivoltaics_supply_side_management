@@ -1,8 +1,10 @@
 from abc import abstractmethod
 import pandas as pd
 
-from agrivoltaics_supply_side_management.agriculture.photosynthetic_rate import PhotosyntheticRate
-from agrivoltaics_supply_side_management.supply.strategy_factory import SupplyStrategyFactory
+from agrivoltaics_supply_side_management.agriculture.photosynthetic_rate\
+    import PhotosyntheticRate
+from agrivoltaics_supply_side_management.supply.strategy_factory\
+    import SupplyStrategyFactory
 
 
 class Configuration:
@@ -41,7 +43,8 @@ class Configuration:
                 ).get_supply_strategy(
                     self._irradiance_manager, self._optimization,
                     self._electricity_generation, self._cultivation, time)
-            electricity_supply, crop_yield = supply_strategy.supply(time, duration_in_sec)
+            electricity_supply, crop_yield = supply_strategy.supply(
+                time, duration_in_sec)
             total_electricity_supply += electricity_supply
             total_crop_yield += crop_yield
 

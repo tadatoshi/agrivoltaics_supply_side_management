@@ -52,7 +52,6 @@ class TestStrategyFactory:
         biomass_energy_ratio = 30
         leaf_area_index = 5
         crop_growth_regulating_factor = 0.95
-        duration_in_sec = 60 # 1[min]
         return Cultivation(harvest_index, biomass_energy_ratio,
                            leaf_area_index, crop_growth_regulating_factor)
 

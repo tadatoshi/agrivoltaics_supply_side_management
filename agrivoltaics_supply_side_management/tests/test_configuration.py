@@ -3,10 +3,14 @@ import numpy as np
 import pandas as pd
 
 from agrivoltaics_supply_side_management.agriculture.crops import Cultivation
-from agrivoltaics_supply_side_management.configuration import VerticalPvConfiguration
-from agrivoltaics_supply_side_management.optimization.convex_optimization import ConvexOptimization
-from agrivoltaics_supply_side_management.photovoltaics.pv_modules import ElectricityGeneration
-from agrivoltaics_supply_side_management.solar_irradiation.irradiance import IrradianceManager
+from agrivoltaics_supply_side_management.configuration\
+    import VerticalPvConfiguration
+from agrivoltaics_supply_side_management.optimization.convex_optimization\
+    import ConvexOptimization
+from agrivoltaics_supply_side_management.photovoltaics.pv_modules\
+    import ElectricityGeneration
+from agrivoltaics_supply_side_management.solar_irradiation.irradiance\
+    import IrradianceManager
 
 
 class TestVerticalPvConfiguration:
@@ -44,8 +48,8 @@ class TestVerticalPvConfiguration:
         biomass_energy_ratio = 30
         leaf_area_index = 5
         crop_growth_regulating_factor = 0.95
-        duration_in_sec = 60 # 1[min]
-        return Cultivation(harvest_index, biomass_energy_ratio, leaf_area_index, crop_growth_regulating_factor)
+        return Cultivation(harvest_index, biomass_energy_ratio,
+                           leaf_area_index, crop_growth_regulating_factor)
 
     @pytest.mark.parametrize(
         "phi, alpha, theta, p_max",
@@ -73,9 +77,11 @@ class TestVerticalPvConfiguration:
 
         electricity_supply, crop_yield = configuration.supply(time_range)
 
-        # TODO: Assert with actual value
-        #       (Note: Result was 65816.26368455126):
-        assert electricity_supply > 0
+        # (Note: Result was 65816.26368455126[J] previously when
+        #        ElectricityGeneration.produce_electric_power was used.)
+        # electricity_supply was 1096.937728075854[Wh], which has reasonable
+        # value [Wh/day].
+        assert electricity_supply == pytest.approx(1096, abs=1)
         # crop_yield was 0.0025746571495983022, which has reasonable
         # value, since
         # 0.0025746571495983022[(kg/m^2)/day] * 120 * 10000 / 1000

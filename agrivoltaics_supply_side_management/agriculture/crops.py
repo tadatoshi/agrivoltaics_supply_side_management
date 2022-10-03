@@ -24,24 +24,12 @@ class Cultivation:
         photosynthetically_active_radiation = UnitConversion.wh_to_mj(
                                                     irradiation)
 
-        # TODO: Modify Photosynthesis.crop_yield to interprete the equation
-        #       from
-        #           sum of discrete values per day with
-        #           daily photosynthetically_active_radiation
-        #       to
-        #           continuous value of photosynthetically_active_radiation
-        if duration_in_sec <= 24 * 60 * 60:
-            number_of_days = 1
-        else:
-            number_of_days = duration_in_sec / (24 * 60 * 60)
-
         photosynthesis = Photosynthesis()
 
         crop_yield_in_kg_per_ha = photosynthesis.crop_yield(
-            self._harvest_index, self._biomass_energy_ratio,
-            photosynthetically_active_radiation,
-            self._leaf_area_index, self._crop_growth_regulating_factor,
-            number_of_days)
+                self._harvest_index, self._biomass_energy_ratio,
+                photosynthetically_active_radiation, self._leaf_area_index,
+                self._crop_growth_regulating_factor)
 
         crop_yield = UnitConversion.ton_per_ha_to_kg_per_m2(
             crop_yield_in_kg_per_ha)
@@ -63,3 +51,6 @@ class Cultivation:
     @light_saturation_point.setter
     def light_saturation_point(self, value):
         self._light_saturation_point = value
+
+    def reduce_biomass_energy_ratio(self, reduction_ratio):
+        self._biomass_energy_ratio *= reduction_ratio

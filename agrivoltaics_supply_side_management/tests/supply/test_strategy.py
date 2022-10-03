@@ -11,12 +11,12 @@ from agrivoltaics_supply_side_management.photovoltaics.pv_modules \
 from agrivoltaics_supply_side_management.solar_irradiation.irradiance \
     import IrradianceManager
 from agrivoltaics_supply_side_management.supply.strategy import \
-    MiddaySupplyStrategy
+    MiddaySupplyStrategy, MiddayDepressionSupplyStrategy
 from agrivoltaics_supply_side_management.supply.strategy_factory\
-    import SupplyStrategyFactory
+    import IrradiationShiftingStrategyFactory
 
 
-class TestSupply:
+class TestSupplyStrategy:
 
     @pytest.fixture()
     def location_data(self):
@@ -57,7 +57,7 @@ class TestSupply:
     def test_supply_over_one_day(self, irradiance_manager, optimization,
                                  electricity_generation, cultivation,
                                  time_range):
-        supply_strategy_factory = SupplyStrategyFactory()
+        supply_strategy_factory = IrradiationShiftingStrategyFactory()
 
         duration_in_sec = pd.to_timedelta(time_range.freq).total_seconds()
 
@@ -109,3 +109,23 @@ class TestSupply:
             # = 6.745728813310228[(ton/ha)/year]
             # Note: Peak solar hours of 5 is used in the calculation above.
             assert crop_yield == pytest.approx(4e-6, abs=1e-7)
+
+    class TestMiddayDepressionSupplyStrategy:
+
+        def test_supply(self, irradiance_manager, optimization,
+                        electricity_generation, cultivation, timezone):
+            supply_strategy = MiddayDepressionSupplyStrategy(
+                irradiance_manager, optimization,
+                electricity_generation, cultivation)
+
+            date_time = datetime(2022, 7, 6, 12, 0, 0,
+                                 tzinfo=ZoneInfo(timezone))
+            duration_in_sec = 60  # 1[min]
+
+            electricity_supply, crop_yield = supply_strategy.supply(
+                                                date_time, duration_in_sec)
+
+            assert electricity_supply == pytest.approx(268 * duration_in_sec,
+                                                       1)
+            # Should be half of that from MiddaySupplyStrategy:
+            assert crop_yield == pytest.approx(2e-6, abs=1e-7)

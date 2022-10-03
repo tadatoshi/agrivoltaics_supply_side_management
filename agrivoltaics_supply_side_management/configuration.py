@@ -3,8 +3,8 @@ import pandas as pd
 
 from agrivoltaics_supply_side_management.agriculture.photosynthetic_rate\
     import PhotosyntheticRate
-from agrivoltaics_supply_side_management.supply.strategy_factory\
-    import SupplyStrategyFactory
+from agrivoltaics_supply_side_management.supply.strategy_factory \
+    import IrradiationShiftingStrategyFactory, DefaultStrategyFactory
 
 
 class Configuration:
@@ -56,7 +56,8 @@ class VerticalPvConfiguration(Configuration):
     def supply_strategy_factory(self):
         if ((not hasattr(self, '_supply_strategy_factory')) or
                 (self._supply_strategy_factory is None)):
-            self._supply_strategy_factory = SupplyStrategyFactory()
+            self._supply_strategy_factory\
+                = IrradiationShiftingStrategyFactory()
         return self._supply_strategy_factory
 
     def light_saturation_point(self):
@@ -75,7 +76,8 @@ class OpticalFilmConfiguration(Configuration):
     def supply_strategy_factory(self):
         if ((not hasattr(self, '_supply_strategy_factory')) or
                 (self._supply_strategy_factory is None)):
-            self._supply_strategy_factory = SupplyStrategyFactory()
+            self._supply_strategy_factory\
+                = IrradiationShiftingStrategyFactory()
         return self._supply_strategy_factory
 
     def light_saturation_point(self):
@@ -87,8 +89,28 @@ class SemitransparentPvConfiguration(Configuration):
     def supply_strategy_factory(self):
         if ((not hasattr(self, '_supply_strategy_factory')) or
                 (self._supply_strategy_factory is None)):
-            self._supply_strategy_factory = SupplyStrategyFactory()
+            self._supply_strategy_factory\
+                = IrradiationShiftingStrategyFactory()
         return self._supply_strategy_factory
 
     def light_saturation_point(self):
         pass
+
+
+class DefaultConfiguration(Configuration):
+
+    def supply_strategy_factory(self):
+        if ((not hasattr(self, '_supply_strategy_factory')) or
+                (self._supply_strategy_factory is None)):
+            self._supply_strategy_factory = DefaultStrategyFactory()
+        return self._supply_strategy_factory
+
+    def light_saturation_point(self):
+        light_saturation_point = \
+            PhotosyntheticRate.find_light_saturation_point(
+                self._net_photosynthetic_rate_parameters['phi'],
+                self._net_photosynthetic_rate_parameters['alpha'],
+                self._net_photosynthetic_rate_parameters['theta'],
+                self._net_photosynthetic_rate_parameters['p_max'],
+                self._ppfd_data)
+        return light_saturation_point

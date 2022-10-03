@@ -25,8 +25,11 @@ class TestPhotosynthesis:
         """
         Using data from 'Table 3 Default parameters for potato' of
         [1] in README.
-        TODO: biomass_energy_ratio has kg in unit and crop_yield has ton
+        biomass_energy_ratio has kg in unit and crop_yield has ton
         in unit. Thus, the units don't match. Investigate.
+        -> Update: Based on the calculated result value, the unit of
+        expected_crop_yield seems to be correct despite the units don't
+        match in the equation.
 
         Arguments
         ---------
@@ -43,22 +46,18 @@ class TestPhotosynthesis:
 
         """
 
-        # TODO: biomass_energy_ratio has kg in unit and crop_yield has ton
-        #       in unit. Thus, the units don't match. Investigate.
-
-        # harvest_index = 0.95
-        # biomass_energy_ratio = 30
-        # photosynthetically_active_radiation = 5000 * 60 * 60 / 1000000
-        # leaf_area_index = 5
-        # crop_growth_regulating_factor = 0.95
-        # number_of_days = 4 * 30
+        # Since in the context of this project,
+        # photosynthetically_active_radiation is continuous for the given
+        # duration, duration of cultivation, one day, or minute,
+        # photosynthetically_active_radiation is total value:
+        photosynthetically_active_radiation *= number_of_days
 
         photosynthesis = Photosynthesis()
 
         actual_crop_yield = photosynthesis.crop_yield(
-            harvest_index, biomass_energy_ratio,
-            photosynthetically_active_radiation,
-            leaf_area_index, crop_growth_regulating_factor, number_of_days)
+                        harvest_index, biomass_energy_ratio,
+                        photosynthetically_active_radiation, leaf_area_index,
+                        crop_growth_regulating_factor)
 
         assert actual_crop_yield == pytest.approx(expected_crop_yield, 1)
 
@@ -70,14 +69,15 @@ class TestPhotosynthesis:
         # assume(harvest_index >= 0 and harvest_index <=1)
 
         #  [MJ] = [Wh] * 60[min/h] * 60[sec/min] / 1000000
-        photosynthetically_active_radiation = 5000 * 60 * 60 / 1000000
+        photosynthetically_active_radiation = (5000 * 60 * 60 / 1000000
+                                               ) * number_of_days
 
         photosynthesis = Photosynthesis()
 
         actual_crop_yield = photosynthesis.crop_yield(
-            harvest_index, biomass_energy_ratio,
-            photosynthetically_active_radiation,
-            leaf_area_index, crop_growth_regulating_factor, number_of_days)
+                        harvest_index, biomass_energy_ratio,
+                        photosynthetically_active_radiation, leaf_area_index,
+                        crop_growth_regulating_factor)
 
         # print("actual_crop_yield:", actual_crop_yield)
 

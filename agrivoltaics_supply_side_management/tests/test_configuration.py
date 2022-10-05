@@ -78,7 +78,9 @@ class TestConfiguration:
                 irradiance_manager, optimization, electricity_generation,
                 cultivation)
 
-            electricity_supply, crop_yield = configuration.supply(time_range)
+            electricity_supply, crop_yield,\
+                cumulative_electric_power_for_morning_peak\
+                    = configuration.supply(time_range)
 
             # (Note: Result was 65816.26368455126[J] previously when
             #        ElectricityGeneration.produce_electric_power was used.)
@@ -90,6 +92,9 @@ class TestConfiguration:
             # 0.0025746571495983022[(kg/m^2)/day] * 120 * 10000 / 1000
             # = 3.089588579517963[(ton/ha)/year]
             assert crop_yield == pytest.approx(0.002, abs=1e-3)
+            # Value was 207.5421186097299
+            assert 0 < cumulative_electric_power_for_morning_peak\
+                   < electricity_supply
 
     class TestDefaultConfiguration:
 
@@ -118,7 +123,9 @@ class TestConfiguration:
                 irradiance_manager, optimization, electricity_generation,
                 cultivation)
 
-            electricity_supply, crop_yield = configuration.supply(time_range)
+            electricity_supply, crop_yield, \
+                cumulative_electric_power_for_morning_peak \
+                    = configuration.supply(time_range)
 
             # electricity_supply was 712.0093257017426[Wh], which has
             # a little less value [Wh/day] than that of PV only configuration,
@@ -129,3 +136,6 @@ class TestConfiguration:
             # 0.0034315755553736794[(kg/m^2)/day] * 120 * 10000 / 1000
             # = 4.117890666448415[(ton/ha)/year]
             assert crop_yield == pytest.approx(0.003, abs=1e-3)
+            # Value was 54.0422876641909
+            assert 0 < cumulative_electric_power_for_morning_peak\
+                   < electricity_supply

@@ -11,8 +11,11 @@ class Photosynthesis:
                    crop_growth_regulating_factor):
         """
         Equation (6) o [1] (See README)
-        TODO: biomass_energy_ratio has kg in unit and crop_yield has ton
+        biomass_energy_ratio has kg in unit and crop_yield has ton
         in unit. Thus, the units don't match. Investigate.
+        -> Update: Based on the calculated result value, the unit of
+        expected_crop_yield seems to be correct despite the units don't
+        match in the equation.
 
         Arguments
         ---------

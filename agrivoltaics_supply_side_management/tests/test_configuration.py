@@ -79,7 +79,8 @@ class TestConfiguration:
                 cultivation)
 
             electricity_supply, crop_yield,\
-                cumulative_electric_power_for_morning_peak\
+                cumulative_electric_power_for_morning_peak, \
+                cumulative_electric_power_for_afternoon_peak \
                     = configuration.supply(time_range)
 
             # (Note: Result was 65816.26368455126[J] previously when
@@ -94,6 +95,8 @@ class TestConfiguration:
             assert crop_yield == pytest.approx(0.002, abs=1e-3)
             # Value was 207.5421186097299
             assert 0 < cumulative_electric_power_for_morning_peak\
+                   < electricity_supply
+            assert 0 < cumulative_electric_power_for_afternoon_peak\
                    < electricity_supply
 
     class TestDefaultConfiguration:
@@ -124,7 +127,8 @@ class TestConfiguration:
                 cultivation)
 
             electricity_supply, crop_yield, \
-                cumulative_electric_power_for_morning_peak \
+                cumulative_electric_power_for_morning_peak, \
+                cumulative_electric_power_for_afternoon_peak \
                     = configuration.supply(time_range)
 
             # electricity_supply was 712.0093257017426[Wh], which has
@@ -138,4 +142,6 @@ class TestConfiguration:
             assert crop_yield == pytest.approx(0.003, abs=1e-3)
             # Value was 54.0422876641909
             assert 0 < cumulative_electric_power_for_morning_peak\
+                   < electricity_supply
+            assert 0 < cumulative_electric_power_for_afternoon_peak\
                    < electricity_supply

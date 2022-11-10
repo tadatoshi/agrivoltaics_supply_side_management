@@ -17,6 +17,10 @@ class SupplyStrategyFactory:
     def cumulative_electric_power_for_morning_peak(self):
         return self._morning_peak_supply_strategy.cumulative_electric_energy()
 
+    def cumulative_electric_power_for_afternoon_peak(self):
+        return \
+            self._afternoon_peak_supply_strategy.cumulative_electric_energy()
+
 
 class IrradiationShiftingStrategyFactory(SupplyStrategyFactory):
 
@@ -44,11 +48,12 @@ class IrradiationShiftingStrategyFactory(SupplyStrategyFactory):
                     electricity_generation, cultivation)
             return self._midday_supply_strategy
         elif time(15, 0, 0) <= date_time.time() < time(18, 0, 0):
-            if ((not hasattr(self, '_afternoon_supply_strategy')) or
-                    (self._afternoon_supply_strategy == None)):
-                self._afternoon_supply_strategy = AfternoonSupplyStrategy(
+            if ((not hasattr(self, '_afternoon_peak_supply_strategy')) or
+                    (self._afternoon_peak_supply_strategy == None)):
+                self._afternoon_peak_supply_strategy \
+                    = AfternoonSupplyStrategy(
                     irradiance_manager, optimization, electricity_generation)
-            return self._afternoon_supply_strategy
+            return self._afternoon_peak_supply_strategy
         else:
             if ((not hasattr(self, '_default_supply_strategy')) or
                     (self._default_supply_strategy == None)):
@@ -84,6 +89,13 @@ class DefaultStrategyFactory(SupplyStrategyFactory):
                             irradiance_manager, optimization,
                             electricity_generation, cultivation)
             return self._midday_depression_supply_strategy
+        elif time(15, 0, 0) <= date_time.time() < time(18, 0, 0):
+            if ((not hasattr(self, '_afternoon_peak_supply_strategy')) or
+                    (self._afternoon_peak_supply_strategy == None)):
+                self._afternoon_peak_supply_strategy = DefaultSupplyStrategy(
+                    irradiance_manager, optimization,
+                    electricity_generation, cultivation)
+            return self._afternoon_peak_supply_strategy
         else:
             if ((not hasattr(self, '_default_supply_strategy')) or
                     (self._default_supply_strategy == None)):

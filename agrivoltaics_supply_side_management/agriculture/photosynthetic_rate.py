@@ -76,7 +76,7 @@ class PhotosyntheticRate:
         return knee_locator.knee
 
     @staticmethod
-    def get_net_photosynthetic_rate_function(p_max):
+    def get_net_photosynthetic_rate_function(p_max, avoid_nan = True):
         """
         In order to specify p_max outside net_photosynthetic_rate function,
         since it is not a part of function
@@ -116,8 +116,9 @@ class PhotosyntheticRate:
             inside_sqrt = ((phi * l + (1 + alpha) * p_max) ** 2
                            - 4 * theta * phi * l * (1 + alpha) * p_max)
 
-            # Temporary solution to avoid getting nan
-            inside_sqrt[inside_sqrt < 0] = 0.0
+            if avoid_nan:
+                # Temporary solution to avoid getting nan
+                inside_sqrt[inside_sqrt < 0] = 0.0
 
             net_photosynthetic_rate_result = (phi * l + (1 + alpha) * p_max
                                               - np.sqrt(inside_sqrt)

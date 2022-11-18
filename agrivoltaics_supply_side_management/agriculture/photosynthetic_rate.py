@@ -86,6 +86,16 @@ class PhotosyntheticRate:
         ---------
         p_max: float
             maximum net photosynthetic rage
+        avoid_nan: boolean
+            If it's set to True, if the inside of the square root of
+            net_photosynthetic_rate_function is negative, the inside of the
+            square root is set to 0, in order to avoid getting NaN as
+            the resulting net photosyntheric rate.
+            If it's set to False, this is not performed. The reason is that
+            assigning the inside of the square root to 0 is through
+            inside_sqrt local variable. When net_photosynthetic_rate_function
+            is used in PyMC3, this variable is set to be of type Tensor, which
+             doesn't allow value assignment, leading to an error.
 
         Returns
         -------

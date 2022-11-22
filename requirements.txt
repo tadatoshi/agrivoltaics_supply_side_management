@@ -8,6 +8,7 @@ tensorflow
 tensorflow-probability
 pymc3
 pvlib
+pvfactors
 opencv-python
 pyomo
 kneed

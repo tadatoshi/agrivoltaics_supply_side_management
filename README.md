@@ -47,22 +47,28 @@ For other platforms, see https://www.gnu.org/software/glpk/
     “Optimisation of vertically mounted agrivoltaic systems,”
     Journal of Cleaner Production, vol. 325, p. 129091, Nov. 2021,
     doi: 10.1016/j.jclepro.2021.129091.
+
 [2] C. B. Honsberg, R. Sampson, R. Kostuk, G. Barron-Gafford, 
     S. Bowden, and S. Goodnick, “Agrivoltaic Modules Co-Designed 
     for Electrical and Crop Productivity,” 
     in 2021 IEEE 48th Photovoltaic Specialists Conference (PVSC), 
     Jun. 2021, pp. 2163–2166. doi: 10.1109/PVSC43889.2021.9519011.
+
 [3] B. Willockx, B. Uytterhaegen, B. Ronsijn, B. Herteleer, and J. Cappelle, 
     “A standardized classification and performance indicators of agrivoltaic 
     systems.,” Oct. 2020. doi: 10.4229/EUPVSEC20202020-6CV.2.47.
+
 [4] H-W, Heldt, ”Plant Biochemistry,” Elsevier Academic Press, 
     Burlington, MA, USA, 2005.
+
 [5] R. W. Langhans and T. W. Tibbits, “Plant Growth Chamber Handbook 
     - Chapter 1 Radiation,” in Plant Growth Chamber Handbook, 
     Iowa State University, 1997.
+
 [6] O. A. Martin, R. Kumar, and J. Lao, "Bayesian Modeling and Computation 
-    in Python," Boca Ratón, 2021. 
+    in Python," Boca Ratón, 2021.
     [Online]. Available: https://bayesiancomputationbook.com
+
 [7] R. Retkute, S. E. Smith-Unna, R. W. Smith, A. J. Burgess, O. E. Jensen, 
     G. N. Johnson, S. P. Preston, E. H. Murchie, ”Exploiting heterogeneous 
     environments: does photosynthetic acclimation optimize carbon gain in 

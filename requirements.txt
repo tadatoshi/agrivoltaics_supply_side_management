@@ -12,6 +12,7 @@ pvfactors
 opencv-python
 pyomo
 kneed
+arch
 jupyterlab
 pytest
 hypothesis

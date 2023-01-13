@@ -72,7 +72,7 @@ class MiddaySupplyStrategy(SupplyStrategy):
         pv_irradiance, crop_irradiance = self._optimization.optimize(
             irradiance, light_saturation_point)
 
-        # allcate irradiance to electricity_generation and cultivation
+        # allocate irradiance to electricity_generation and cultivation
         self._electricity_generation.consume_light_power(pv_irradiance)
         self._cultivation.consume_light_power(crop_irradiance)
 

@@ -49,11 +49,11 @@ class Configuration:
 
         cumulative_electric_power_for_morning_peak \
             = self.supply_strategy_factory(
-        ).cumulative_electric_power_for_morning_peak()
+                    ).cumulative_electric_power_for_morning_peak()
 
         cumulative_electric_power_for_afternoon_peak \
             = self.supply_strategy_factory(
-        ).cumulative_electric_power_for_afternoon_peak()
+                    ).cumulative_electric_power_for_afternoon_peak()
 
         return total_electricity_supply, total_crop_yield, \
                cumulative_electric_power_for_morning_peak, \

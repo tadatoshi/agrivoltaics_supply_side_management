@@ -3,7 +3,7 @@ pandas
 matplotlib
 seaborn
 scikit-learn
-statsmodels
+git+https://github.com/statsmodels/statsmodels
 tensorflow
 tensorflow-probability
 pymc3

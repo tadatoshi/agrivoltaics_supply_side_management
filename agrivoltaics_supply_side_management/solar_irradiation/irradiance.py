@@ -52,7 +52,7 @@ class BifacialIrradianceManager:
             albedo, gcr, pvrow_height, pvrow_width, n_pvrows,
             index_observed_pvrow, bifaciality)
 
-        self.ground_absorbed_irrardiance =\
+        self._ground_absorbed_irrardiance =\
             self._calculate_ground_absorbed_irrardiance(self._bifacial_irradiance_df,
                                            surface_tilt, albedo)
 
@@ -69,7 +69,7 @@ class BifacialIrradianceManager:
         bifacial module of pvlib-python
         """
         loc = location.Location(latitude=self._lattitude,
-                                longitude=-self._longitude,
+                                longitude=self._longitude,
                                 tz=self._timezone)
         solar_position = loc.get_solarposition(self._time_range)
         clearsky = loc.get_clearsky(self._time_range)
@@ -121,3 +121,11 @@ class BifacialIrradianceManager:
         result_series = reflected_irradiance_on_ground / albedo * (1 - albedo)
 
         return result_series.to_frame(name='ground_absorbed_irradiance')
+
+    @property
+    def bifacial_irradiances(self):
+        return self._bifacial_irradiance_df
+
+    @property
+    def ground_absorbed_irrardiance(self):
+        return self._ground_absorbed_irrardiance

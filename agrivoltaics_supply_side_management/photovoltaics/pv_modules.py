@@ -1,3 +1,7 @@
+from pvlib import location
+from pvlib import pvsystem
+from pvlib import modelchain
+from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS as PARAMS
 from agrivoltaics_supply_side_management.util.unit_conversion \
     import UnitConversion
 
@@ -28,3 +32,47 @@ class ElectricityGeneration:
 
         return UnitConversion.j_to_wh(
                             self.produce_electric_power() * duration_in_sec)
+
+
+class BifacialElectricityGeneration:
+
+    def __init__(self, lattitude, longitude, timezone, bifacial_irradiances,
+                 temp_model_parameters_type,
+                 module_name, inverter_name, surface_tilt, surface_azimuth):
+        """
+        Arguments:
+        ----------
+        bifacial_irradiances: DataFrame
+        """
+        self._site_location = location.Location(latitude=lattitude,
+                                longitude=longitude,
+                                tz=timezone)
+
+        self._bifacial_irradiances = bifacial_irradiances
+
+        self._temp_model_parameters = PARAMS['sapm'][temp_model_parameters_type]
+        cec_modules = pvsystem.retrieve_sam('CECMod')
+        self._cec_module = cec_modules[module_name]
+        cec_inverters = pvsystem.retrieve_sam('cecinverter')
+        self._cec_inverter = cec_inverters[inverter_name]
+        self._fixed_mount = pvsystem.FixedMount(surface_tilt, surface_azimuth)
+
+    def consume_light_power(self, irradiance):
+        pass
+
+    def produce_electric_power(self, date_time=None):
+        if ((not hasattr(self, '_ac_power')) or
+                (self._ac_power is None)):
+            pv_array = pvsystem.Array(mount=self._fixed_mount,
+                module_parameters=self._cec_module,
+                temperature_model_parameters=self._temp_model_parameters)
+            pv_system = pvsystem.PVSystem(arrays=[pv_array],
+                                    inverter_parameters=self._cec_inverter)
+            model_chain = modelchain.ModelChain(pv_system,
+                                                self._site_location,
+                                                aoi_model='no_loss')
+            model_chain.run_model_from_effective_irradiance(
+                self._bifacial_irradiances)
+            self._ac_power = model_chain.results.ac
+
+        return self._ac_power.loc[date_time]

@@ -1,5 +1,8 @@
+import pytest
+import numpy as np
+import pandas as pd
 from agrivoltaics_supply_side_management.photovoltaics.pv_modules\
-    import ElectricityGeneration
+    import ElectricityGeneration, BifacialElectricityGeneration
 
 
 class TestElectricityGeneration:
@@ -32,3 +35,49 @@ class TestElectricityGeneration:
         expected_energy = 210 * duration_in_sec / (60 * 60)
 
         assert actual_energy == expected_energy
+
+
+class TestBifacialElectricityGeneration:
+
+    @pytest.fixture()
+    def time_index(self):
+        times = pd.date_range('2022-07-06', '2022-07-07', freq='1T',
+                              tz='Canada/Pacific')
+        return times[700:704]
+
+    @pytest.fixture()
+    def bifacial_irradiances(self, time_index):
+        data = {'total_inc_front': [903.2, 904.8, 906.4, 907.9],
+                'total_inc_back': [34.3, 34.4, 34.4, 34.4],
+                'total_abs_front': [876.1, 877.7, 879.2, 880.7],
+                'total_abs_back': [32.6, 32.6, 32.7, 32.7],
+                'effective_irradiance': [900.7, 902.2, 903.7, 905.2]}
+        bifacial_irradiances = pd.DataFrame(data, index=time_index)
+        return bifacial_irradiances
+
+    @pytest.mark.parametrize(
+        "temp_model_parameters_type, module_name, inverter_name",
+        [
+            ('open_rack_glass_glass', 'Trina_Solar_TSM_300DEG5C_07_II_',
+             'ABB__MICRO_0_25_I_OUTD_US_208__208V_')
+        ]
+    )
+    def test_produce_electric_power(self, time_index, bifacial_irradiances,
+                                    temp_model_parameters_type,
+                                    module_name, inverter_name):
+        lattitude, longitude = 49.26757152616243, -123.25266177347093
+        timezone = 'Canada/Pacific'
+        surface_tilt = 20
+        surface_azimuth = 180
+
+        bifacial_electricity_generation = BifacialElectricityGeneration(
+                                    lattitude, longitude, timezone,
+                                    bifacial_irradiances,
+                                    temp_model_parameters_type,
+                                    module_name, inverter_name,
+                                    surface_tilt, surface_azimuth)
+
+        actual_power = bifacial_electricity_generation.produce_electric_power(
+            time_index[0])
+
+        assert np.isclose(actual_power, 235, rtol=1)

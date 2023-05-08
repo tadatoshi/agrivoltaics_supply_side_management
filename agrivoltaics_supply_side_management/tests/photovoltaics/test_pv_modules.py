@@ -77,7 +77,42 @@ class TestBifacialElectricityGeneration:
                                     module_name, inverter_name,
                                     surface_tilt, surface_azimuth)
 
-        actual_power = bifacial_electricity_generation.produce_electric_power(
-            time_index[0])
+        bifacial_electricity_generation.consume_light_power(
+            date_time=time_index[0])
+        actual_power =\
+            bifacial_electricity_generation.produce_electric_power()
 
         assert np.isclose(actual_power, 235, rtol=1)
+
+    @pytest.mark.parametrize(
+        "temp_model_parameters_type, module_name, inverter_name",
+        [
+            ('open_rack_glass_glass', 'Trina_Solar_TSM_300DEG5C_07_II_',
+             'ABB__MICRO_0_25_I_OUTD_US_208__208V_')
+        ]
+    )
+    def test_produce_electric_energy(self, time_index, bifacial_irradiances,
+                                     temp_model_parameters_type,
+                                     module_name, inverter_name):
+        lattitude, longitude = 49.26757152616243, -123.25266177347093
+        timezone = 'Canada/Pacific'
+        surface_tilt = 20
+        surface_azimuth = 180
+
+        duration_in_sec = 60
+
+        bifacial_electricity_generation = BifacialElectricityGeneration(
+                                    lattitude, longitude, timezone,
+                                    bifacial_irradiances,
+                                    temp_model_parameters_type,
+                                    module_name, inverter_name,
+                                    surface_tilt, surface_azimuth)
+
+        bifacial_electricity_generation.consume_light_power(
+            date_time=time_index[0])
+        actual_energy =\
+            bifacial_electricity_generation.produce_electric_energy(
+                duration_in_sec)
+
+        assert np.isclose(actual_energy, 235 * duration_in_sec / (60 * 60),
+                          rtol=1)

@@ -14,9 +14,12 @@ class ElectricityGeneration:
         # 25[degree-C], and Air Mass 1.5
         self._module_mpp = 210
 
-    def consume_light_power(self, irradiance):
-        assert irradiance >= 0
-        self._irradiance = irradiance
+    def consume_light_power(self, irradiance=None, date_time=None):
+        if irradiance is not None:
+            assert irradiance >= 0
+            self._irradiance = irradiance
+        elif date_time is not None:
+            self._date_time = date_time
 
     def produce_electric_power(self):
 
@@ -34,7 +37,7 @@ class ElectricityGeneration:
                             self.produce_electric_power() * duration_in_sec)
 
 
-class BifacialElectricityGeneration:
+class BifacialElectricityGeneration(ElectricityGeneration):
 
     def __init__(self, lattitude, longitude, timezone, bifacial_irradiances,
                  temp_model_parameters_type,
@@ -50,29 +53,31 @@ class BifacialElectricityGeneration:
 
         self._bifacial_irradiances = bifacial_irradiances
 
-        self._temp_model_parameters = PARAMS['sapm'][temp_model_parameters_type]
+        temp_model_parameters = PARAMS['sapm'][temp_model_parameters_type]
         cec_modules = pvsystem.retrieve_sam('CECMod')
-        self._cec_module = cec_modules[module_name]
+        cec_module = cec_modules[module_name]
         cec_inverters = pvsystem.retrieve_sam('cecinverter')
-        self._cec_inverter = cec_inverters[inverter_name]
-        self._fixed_mount = pvsystem.FixedMount(surface_tilt, surface_azimuth)
+        cec_inverter = cec_inverters[inverter_name]
+        fixed_mount = pvsystem.FixedMount(surface_tilt, surface_azimuth)
 
-    def consume_light_power(self, irradiance):
-        pass
+        pv_array = pvsystem.Array(mount=fixed_mount,
+                                  module_parameters=cec_module,
+                                  temperature_model_parameters=temp_model_parameters)
+        self._pv_system = pvsystem.PVSystem(arrays=[pv_array],
+                                      inverter_parameters=cec_inverter)
 
-    def produce_electric_power(self, date_time=None):
+    def produce_electric_power(self):
         if ((not hasattr(self, '_ac_power')) or
                 (self._ac_power is None)):
-            pv_array = pvsystem.Array(mount=self._fixed_mount,
-                module_parameters=self._cec_module,
-                temperature_model_parameters=self._temp_model_parameters)
-            pv_system = pvsystem.PVSystem(arrays=[pv_array],
-                                    inverter_parameters=self._cec_inverter)
-            model_chain = modelchain.ModelChain(pv_system,
+            model_chain = modelchain.ModelChain(self._pv_system,
                                                 self._site_location,
                                                 aoi_model='no_loss')
             model_chain.run_model_from_effective_irradiance(
                 self._bifacial_irradiances)
             self._ac_power = model_chain.results.ac
 
-        return self._ac_power.loc[date_time]
+        result = self._ac_power.loc[self._date_time]
+        if result < 0:
+            result = 0
+
+        return result

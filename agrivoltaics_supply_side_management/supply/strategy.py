@@ -14,7 +14,6 @@ class SupplyStrategy:
         self._optimization = optimization
         self._cumulative_electric_energy = 0.0
 
-    @abstractmethod
     def supply(self, date_time: datetime, duration_in_sec):
         """
         Obtains how much electricity and crop yield are supplied
@@ -32,10 +31,36 @@ class SupplyStrategy:
         -------
         electric_energy, crop_yield: tuple of (float, float)
         """
-        pass
+        self._irradiance_comsumption(date_time)
+
+        return self._produce_energy(duration_in_sec)
 
     def cumulative_electric_energy(self):
         return self._cumulative_electric_energy
+
+    @abstractmethod
+    def _irradiance_comsumption(self, date_time):
+        """
+        Arguments
+        ---------
+        date_time: datetime
+            Time stamp of the period of supply.
+        """
+        pass
+
+    @abstractmethod
+    def _produce_energy(self, duration_in_sec):
+        """
+        Arguments
+        ---------
+        duration_in_sec: float
+            Duration in second for the period of supply.
+
+        Returns
+        -------
+        electric_energy, crop_yield: tuple of (float, float)
+        """
+        pass
 
 
 class MorningSupplyStrategy(SupplyStrategy):
@@ -45,13 +70,14 @@ class MorningSupplyStrategy(SupplyStrategy):
         super().__init__(irradiance_manager, optimization)
         self._electricity_generation = electricity_generation
 
-    def supply(self, date_time: datetime, duration_in_sec):
+    def _irradiance_comsumption(self, date_time):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
         self._electricity_generation.consume_light_power(irradiance)
 
-        electric_energy\
+    def _produce_energy(self, duration_in_sec):
+        electric_energy \
             = self._electricity_generation.produce_electric_energy(
-                                                        duration_in_sec)
+            duration_in_sec)
         self._cumulative_electric_energy += electric_energy
 
         return electric_energy, 0
@@ -65,7 +91,7 @@ class MiddaySupplyStrategy(SupplyStrategy):
         self._electricity_generation = electricity_generation
         self._cultivation = cultivation
 
-    def supply(self, date_time: datetime, duration_in_sec):
+    def _irradiance_comsumption(self, date_time):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
         light_saturation_point = self._cultivation.light_saturation_point
 
@@ -76,10 +102,12 @@ class MiddaySupplyStrategy(SupplyStrategy):
         self._electricity_generation.consume_light_power(pv_irradiance)
         self._cultivation.consume_light_power(crop_irradiance)
 
-        electric_energy\
+    def _produce_energy(self, duration_in_sec):
+        electric_energy \
             = self._electricity_generation.produce_electric_energy(
-                                                            duration_in_sec)
+            duration_in_sec)
         self._cumulative_electric_energy += electric_energy
+
         crop_yield = self._cultivation.produce(duration_in_sec)
 
         return electric_energy, crop_yield
@@ -92,14 +120,14 @@ class AfternoonSupplyStrategy(SupplyStrategy):
         super().__init__(irradiance_manager, optimization)
         self._electricity_generation = electricity_generation
 
-    def supply(self, date_time: datetime, duration_in_sec):
+    def _irradiance_comsumption(self, date_time):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
-
         self._electricity_generation.consume_light_power(irradiance)
 
-        electric_energy\
+    def _produce_energy(self, duration_in_sec):
+        electric_energy \
             = self._electricity_generation.produce_electric_energy(
-                                                        duration_in_sec)
+            duration_in_sec)
         self._cumulative_electric_energy += electric_energy
 
         return electric_energy, 0
@@ -115,7 +143,7 @@ class MiddayDepressionSupplyStrategy(SupplyStrategy):
         #       due to midday depression:
         self._cultivation = self._reduce_biomass_energy_ratio(cultivation)
 
-    def supply(self, date_time: datetime, duration_in_sec):
+    def _irradiance_comsumption(self, date_time):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
         light_saturation_point = self._cultivation.light_saturation_point
 
@@ -126,10 +154,12 @@ class MiddayDepressionSupplyStrategy(SupplyStrategy):
         self._electricity_generation.consume_light_power(pv_irradiance)
         self._cultivation.consume_light_power(crop_irradiance)
 
-        electric_energy\
+    def _produce_energy(self, duration_in_sec):
+        electric_energy \
             = self._electricity_generation.produce_electric_energy(
-                                                            duration_in_sec)
+            duration_in_sec)
         self._cumulative_electric_energy += electric_energy
+
         crop_yield = self._cultivation.produce(duration_in_sec)
 
         return electric_energy, crop_yield
@@ -152,7 +182,7 @@ class DefaultSupplyStrategy(SupplyStrategy):
         self._electricity_generation = electricity_generation
         self._cultivation = cultivation
 
-    def supply(self, date_time: datetime, duration_in_sec):
+    def _irradiance_comsumption(self, date_time):
         irradiance = self._irradiance_manager.get_irradiance(date_time)
         light_saturation_point = self._cultivation.light_saturation_point
 
@@ -163,10 +193,12 @@ class DefaultSupplyStrategy(SupplyStrategy):
         self._electricity_generation.consume_light_power(pv_irradiance)
         self._cultivation.consume_light_power(crop_irradiance)
 
-        electric_energy\
+    def _produce_energy(self, duration_in_sec):
+        electric_energy \
             = self._electricity_generation.produce_electric_energy(
-                                                            duration_in_sec)
+            duration_in_sec)
         self._cumulative_electric_energy += electric_energy
+
         crop_yield = self._cultivation.produce(duration_in_sec)
 
         return electric_energy, crop_yield

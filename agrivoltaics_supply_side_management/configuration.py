@@ -4,7 +4,8 @@ import pandas as pd
 from agrivoltaics_supply_side_management.agriculture.photosynthetic_rate \
     import PhotosyntheticRate
 from agrivoltaics_supply_side_management.supply.strategy_factory \
-    import IrradiationShiftingStrategyFactory, DefaultStrategyFactory
+    import IrradiationShiftingStrategyFactory, DefaultStrategyFactory, \
+    BifacialIrradiationShiftingStrategyFactory, DefaultBifacialStrategyFactory
 
 
 class Configuration:
@@ -112,6 +113,45 @@ class DefaultConfiguration(Configuration):
         if ((not hasattr(self, '_supply_strategy_factory')) or
                 (self._supply_strategy_factory is None)):
             self._supply_strategy_factory = DefaultStrategyFactory()
+        return self._supply_strategy_factory
+
+    def light_saturation_point(self):
+        light_saturation_point = \
+            PhotosyntheticRate.find_light_saturation_point(
+                self._net_photosynthetic_rate_parameters['phi'],
+                self._net_photosynthetic_rate_parameters['alpha'],
+                self._net_photosynthetic_rate_parameters['theta'],
+                self._net_photosynthetic_rate_parameters['p_max'],
+                self._ppfd_data)
+        return light_saturation_point
+
+
+class BifacialVerticalPvConfiguration(VerticalPvConfiguration):
+
+    def supply_strategy_factory(self):
+        if ((not hasattr(self, '_supply_strategy_factory')) or
+                (self._supply_strategy_factory is None)):
+            self._supply_strategy_factory \
+                = BifacialIrradiationShiftingStrategyFactory()
+        return self._supply_strategy_factory
+
+    def light_saturation_point(self):
+        light_saturation_point = \
+            PhotosyntheticRate.find_light_saturation_point(
+                self._net_photosynthetic_rate_parameters['phi'],
+                self._net_photosynthetic_rate_parameters['alpha'],
+                self._net_photosynthetic_rate_parameters['theta'],
+                self._net_photosynthetic_rate_parameters['p_max'],
+                self._ppfd_data)
+        return light_saturation_point
+
+
+class DefaultBifacialConfiguration(DefaultConfiguration):
+
+    def supply_strategy_factory(self):
+        if ((not hasattr(self, '_supply_strategy_factory')) or
+                (self._supply_strategy_factory is None)):
+            self._supply_strategy_factory = DefaultBifacialStrategyFactory()
         return self._supply_strategy_factory
 
     def light_saturation_point(self):

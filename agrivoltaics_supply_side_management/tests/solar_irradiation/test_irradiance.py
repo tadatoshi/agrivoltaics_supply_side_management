@@ -6,7 +6,7 @@ from agrivoltaics_supply_side_management.solar_irradiation.irradiance\
     import BifacialIrradianceManager
 
 
-class TestIrradianceManager:
+class TestBifacialIrradianceManager:
 
     def test_get_bifacial_irradiances(self):
 

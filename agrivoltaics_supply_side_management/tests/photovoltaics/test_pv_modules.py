@@ -69,20 +69,28 @@ class TestBifacialElectricityGeneration:
         timezone = 'Canada/Pacific'
         surface_tilt = 20
         surface_azimuth = 180
+        bifaciality = 0.75
+
+        pv_irradiance = 800.0 # Value less than total_inc_front based on
+                              # optimization for sharing between PV and crop
 
         bifacial_electricity_generation = BifacialElectricityGeneration(
                                     lattitude, longitude, timezone,
                                     bifacial_irradiances,
                                     temp_model_parameters_type,
                                     module_name, inverter_name,
-                                    surface_tilt, surface_azimuth)
+                                    surface_tilt, surface_azimuth,
+                                    bifaciality)
 
         bifacial_electricity_generation.consume_light_power(
+            irradiance=pv_irradiance,
             date_time=time_index[0])
         actual_power =\
             bifacial_electricity_generation.produce_electric_power()
 
-        assert np.isclose(actual_power, 235, rtol=1)
+        assert actual_power < 235
+        #assert np.isclose(actual_power, 235, rtol=1)
+        #assert np.isclose(actual_power, 235, atol=1)
 
     @pytest.mark.parametrize(
         "temp_model_parameters_type, module_name, inverter_name",
@@ -98,6 +106,10 @@ class TestBifacialElectricityGeneration:
         timezone = 'Canada/Pacific'
         surface_tilt = 20
         surface_azimuth = 180
+        bifaciality = 0.75
+
+        pv_irradiance = 800.0 # Value less than total_inc_front based on
+                              # optimization for sharing between PV and crop
 
         duration_in_sec = 60
 
@@ -106,13 +118,18 @@ class TestBifacialElectricityGeneration:
                                     bifacial_irradiances,
                                     temp_model_parameters_type,
                                     module_name, inverter_name,
-                                    surface_tilt, surface_azimuth)
+                                    surface_tilt, surface_azimuth,
+                                    bifaciality)
 
         bifacial_electricity_generation.consume_light_power(
+            irradiance=pv_irradiance,
             date_time=time_index[0])
         actual_energy =\
             bifacial_electricity_generation.produce_electric_energy(
                 duration_in_sec)
 
-        assert np.isclose(actual_energy, 235 * duration_in_sec / (60 * 60),
-                          rtol=1)
+        assert actual_energy < 235 * duration_in_sec / (60 * 60)
+        #assert np.isclose(actual_energy, 235 * duration_in_sec / (60 * 60),
+        #                  rtol=1)
+        #assert np.isclose(actual_energy, 235 * duration_in_sec / (60 * 60),
+        #                  atol=1)

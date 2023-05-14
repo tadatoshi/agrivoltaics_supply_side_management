@@ -18,7 +18,7 @@ class ElectricityGeneration:
         if irradiance is not None:
             assert irradiance >= 0
             self._irradiance = irradiance
-        elif date_time is not None:
+        if date_time is not None:
             self._date_time = date_time
 
     def produce_electric_power(self):
@@ -41,7 +41,8 @@ class BifacialElectricityGeneration(ElectricityGeneration):
 
     def __init__(self, lattitude, longitude, timezone, bifacial_irradiances,
                  temp_model_parameters_type,
-                 module_name, inverter_name, surface_tilt, surface_azimuth):
+                 module_name, inverter_name, surface_tilt, surface_azimuth,
+                 bifaciality):
         """
         Arguments:
         ----------
@@ -52,6 +53,7 @@ class BifacialElectricityGeneration(ElectricityGeneration):
                                 tz=timezone)
 
         self._bifacial_irradiances = bifacial_irradiances
+        self._bifaciality = bifaciality
 
         temp_model_parameters = PARAMS['sapm'][temp_model_parameters_type]
         cec_modules = pvsystem.retrieve_sam('CECMod')
@@ -76,8 +78,31 @@ class BifacialElectricityGeneration(ElectricityGeneration):
                 self._bifacial_irradiances)
             self._ac_power = model_chain.results.ac
 
-        result = self._ac_power.loc[self._date_time]
-        if result < 0:
-            result = 0
+        ac_power = self._ac_power.loc[self._date_time]
+        if ac_power < 0:
+            ac_power = 0
+
+        if ac_power == 0:
+            return ac_power
+
+        if self._irradiance is None:
+            # There is no adjustment necessary:
+            return ac_power
+
+        # Adjust ac_power to the inc front irradiance allocated to PV by
+        # optimization
+        inc_front_irradiance = self._bifacial_irradiances.loc[
+            self._date_time]['total_inc_front']
+        inc_front_ratio = self._irradiance / inc_front_irradiance
+        front_ratio = self._bifacial_irradiances.loc[
+            self._date_time]['total_abs_front'
+                ] / self._bifacial_irradiances.loc[
+                    self._date_time]['effective_irradiance']
+        back_ratio = (self._bifacial_irradiances.loc[
+            self._date_time]['total_abs_back'] * self._bifaciality
+                ) / self._bifacial_irradiances.loc[
+                    self._date_time]['effective_irradiance']
+        adjustment_ratio = front_ratio * inc_front_ratio + back_ratio
+        result = ac_power * adjustment_ratio
 
         return result

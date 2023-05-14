@@ -4,6 +4,8 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from agrivoltaics_supply_side_management.agriculture.crops import Cultivation
+from agrivoltaics_supply_side_management.optimization.convex_optimization\
+    import ConvexOptimization
 from agrivoltaics_supply_side_management.photovoltaics.pv_modules \
     import BifacialElectricityGeneration
 from agrivoltaics_supply_side_management.solar_irradiation.irradiance \
@@ -37,8 +39,12 @@ class TestBifacialSupplyStrategy:
         return surface_azimuth, surface_tilt
 
     @pytest.fixture()
+    def bifaciality(self):
+        return 0.75
+
+    @pytest.fixture()
     def irradiance_manager(self, location_data, timezone, time_range,
-                           surface_params):
+                           surface_params, bifaciality):
         lattitude, longitude = location_data[0], location_data[1]
 
         surface_azimuth, surface_tilt = surface_params[0], surface_params[1]
@@ -50,7 +56,6 @@ class TestBifacialSupplyStrategy:
         albedo = 0.2
         n_pvrows = 3
         index_observed_pvrow = 1
-        bifaciality = 0.75
 
         return BifacialIrradianceManager(
             lattitude, longitude, timezone, time_range,
@@ -60,11 +65,12 @@ class TestBifacialSupplyStrategy:
 
     @pytest.fixture()
     def optimization(self):
-        return None
+        return ConvexOptimization()
 
     @pytest.fixture()
     def electricity_generation(self, location_data, timezone, time_range,
-                               surface_params, irradiance_manager):
+                               surface_params, irradiance_manager,
+                               bifaciality):
         lattitude, longitude = location_data[0], location_data[1]
 
         surface_azimuth, surface_tilt = surface_params[0], surface_params[1]
@@ -77,7 +83,8 @@ class TestBifacialSupplyStrategy:
                                     irradiance_manager.bifacial_irradiances,
                                     temp_model_parameters_type,
                                     module_name, inverter_name,
-                                    surface_tilt, surface_azimuth)
+                                    surface_tilt, surface_azimuth,
+                                    bifaciality)
 
     @pytest.fixture()
     def cultivation(self):
@@ -107,15 +114,15 @@ class TestBifacialSupplyStrategy:
             total_electricity_supply += electricity_supply
             total_crop_yield += crop_yield
 
-        # total_electricity_supply was 2222.392542730113[Wh], which is
+        # total_electricity_supply was 1904.0985760805615[Wh], which is
         # much bigger than 1242.6796249192898[Wh/day]
         # by IrradiationShiftingStrategyFactory
-        assert total_electricity_supply == pytest.approx(2222, abs=1)
-        # total_crop_yield was 0.00140730535466389, which has a little lower
-        # value but OK, since
-        # 0.00140730535466389[(kg/m^2)/day] * 120 * 10000 / 1000
-        # = 1.6887664255966681[(ton/ha)/year]
-        assert total_crop_yield == pytest.approx(0.0015, abs=1e-4)
+        assert total_electricity_supply == pytest.approx(1904, abs=1)
+        # total_crop_yield was 0.0019817513464064403, which has reasonable
+        # value, since
+        # 0.0019817513464064403[(kg/m^2)/day] * 120 * 10000 / 1000
+        # = 2.378101615687728[(ton/ha)/year]
+        assert total_crop_yield == pytest.approx(0.0019, abs=1e-4)
 
 
     class TestBifacialMiddaySupplyStrategy:
@@ -135,13 +142,13 @@ class TestBifacialSupplyStrategy:
 
             assert electricity_supply == pytest.approx(268 * duration_in_sec,
                                                        1)
-            # crop_yield was 3.4921601224747363e-06, which may be a little
+            # crop_yield was 3.903778248443417e-06, which may be a little
             # smaller but OK, since:
-            # 3.903778248443419e-06[(kg/m^2)/min] * 60 * 5 * 120 * 10000
+            # 3.903778248443417e-06[(kg/m^2)/min] * 60 * 5 * 120 * 10000
             #     / 1000
-            # = 1.2571776440909053[(ton/ha)/year]
+            # = 1.40536016943963[(ton/ha)/year]
             # Note: Peak solar hours of 5 is used in the calculation above.
-            assert crop_yield == pytest.approx(3.4e-6, abs=1e-7)
+            assert crop_yield == pytest.approx(3.9e-6, abs=1e-7)
 
 
     class TestBifacialMiddayDepressionSupplyStrategy:
@@ -162,4 +169,4 @@ class TestBifacialSupplyStrategy:
             assert electricity_supply == pytest.approx(268 * duration_in_sec,
                                                        1)
             # Should be half of that from MiddaySupplyStrategy:
-            assert crop_yield == pytest.approx(1.7e-6, abs=1e-7)
+            assert crop_yield == pytest.approx(1.9e-6, abs=1e-7)

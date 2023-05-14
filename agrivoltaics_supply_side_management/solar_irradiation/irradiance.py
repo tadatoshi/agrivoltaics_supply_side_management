@@ -47,6 +47,8 @@ class BifacialIrradianceManager:
         self._timezone = timezone
         self._time_range = time_range
 
+        self._surface_tilt = surface_tilt
+
         self._bifacial_irradiance_df = self._get_bifacial_irradiances(
             surface_azimuth, surface_tilt, axis_azimuth,
             albedo, gcr, pvrow_height, pvrow_width, n_pvrows,
@@ -106,21 +108,18 @@ class BifacialIrradianceManager:
 
         # Get reflected irradiance from the ground over the surface covered
         # by PV module
-        # Note: Since the value is per m^2, we don't perform mulciplication by
-        #       cos, which reduces surface area to be less than 1[m^2].
-        #       We assume that crops are entirely covered by module, which is
-        #       bigger than 1[m^2].
-        # TODO: Come back and adjust to the case where ground covered by module
-        #       is less than 1[m^2].
-        #reflected_irradiance_on_ground = bifacial_irradiances['total_inc_back'
-        #                                 ] * np.cos(np.radians(surface_tilt))
         reflected_irradiance_on_ground = bifacial_irradiances['total_inc_back'
-                                                ].copy()
+                                         ] * np.cos(np.radians(surface_tilt))
+        #reflected_irradiance_on_ground = bifacial_irradiances['total_inc_back'
+        #                                        ].copy()
         # Portion indicated albedo is considered to be the reflected
         # irradiance on ground
         result_series = reflected_irradiance_on_ground / albedo * (1 - albedo)
 
         return result_series.to_frame(name='ground_absorbed_irradiance')
+
+    def get_inc_irradiance_from_horizontal(self, horizontal_irradiance):
+        return horizontal_irradiance / np.cos(np.radians(self._surface_tilt))
 
     @property
     def bifacial_irradiances(self):
@@ -129,3 +128,13 @@ class BifacialIrradianceManager:
     @property
     def ground_absorbed_irrardiance(self):
         return self._ground_absorbed_irrardiance
+
+    @property
+    def inc_front_horizontal_irradiance(self):
+        if ((not hasattr(self, '_inc_front_horizontal_irradiance')) or
+                (self._inc_front_horizontal_irradiance is None)):
+            self._inc_front_horizontal_irradiance = \
+                (self._bifacial_irradiance_df['total_inc_front'
+                        ] * np.cos(np.radians(self._surface_tilt))
+                 ).to_frame(name='inc_front_horizontal_irradiance')
+        return self._inc_front_horizontal_irradiance

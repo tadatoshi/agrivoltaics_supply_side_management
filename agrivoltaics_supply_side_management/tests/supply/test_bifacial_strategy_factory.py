@@ -39,6 +39,10 @@ class TestStrategyFactory:
         return surface_azimuth, surface_tilt
 
     @pytest.fixture()
+    def bifaciality(self):
+        return 0.75
+
+    @pytest.fixture()
     def irradiance_manager(self, location_data, timezone, time_range,
                            surface_params):
         lattitude, longitude = location_data[0], location_data[1]
@@ -66,7 +70,8 @@ class TestStrategyFactory:
 
     @pytest.fixture()
     def electricity_generation(self, location_data, timezone, time_range,
-                               surface_params, irradiance_manager):
+                               surface_params, irradiance_manager,
+                               bifaciality):
         lattitude, longitude = location_data[0], location_data[1]
 
         surface_azimuth, surface_tilt = surface_params[0], surface_params[1]
@@ -79,7 +84,8 @@ class TestStrategyFactory:
                                     irradiance_manager.bifacial_irradiances,
                                     temp_model_parameters_type,
                                     module_name, inverter_name,
-                                    surface_tilt, surface_azimuth)
+                                    surface_tilt, surface_azimuth,
+                                    bifaciality)
 
     @pytest.fixture()
     def cultivation(self):

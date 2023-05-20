@@ -5,7 +5,6 @@ from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS as PARAMS
 from agrivoltaics_supply_side_management.util.unit_conversion \
     import UnitConversion
 
-
 class ElectricityGeneration:
 
     def __init__(self):
@@ -104,5 +103,12 @@ class BifacialElectricityGeneration(ElectricityGeneration):
                     self._date_time]['effective_irradiance']
         adjustment_ratio = front_ratio * inc_front_ratio + back_ratio
         result = ac_power * adjustment_ratio
+
+        # When the same instance of this class is used in subsequent strategy,
+        # having self._irradiance causes problem in execution flow.
+        # Hence, set it to None:
+        # TODO: Find a better way. Maybe, introduce a flag.
+        self._irradiance = None
+        self._date_time = None
 
         return result

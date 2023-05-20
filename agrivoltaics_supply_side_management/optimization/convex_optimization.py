@@ -4,16 +4,17 @@ from pyomo.core import maximize
 
 class ConvexOptimization:
 
-    def optimize(self, irradiance, light_saturation_point):
+    def optimize(self, irradiance, light_saturation_point, verbose=False):
         """
         Performs convex optimization for agrivoltaic system.
 
         Arguments
         ---------
+        irradiance
         light_saturation_point : float [W/m^2]
             Solar irradiance at which plant photosynthesis saturates.
-
-
+        verbose: boolean
+            If True, Pyomo prints out information.
         """
 
         model = pyo.ConcreteModel()
@@ -22,7 +23,7 @@ class ConvexOptimization:
         model.total = pyo.Constraint(expr=model.x[1] + model.x[2] <= irradiance)
         model.crop = pyo.Constraint(expr=model.x[1] <=
                                          light_saturation_point)
-        result = pyo.SolverFactory('glpk').solve(model, tee=True)
+        result = pyo.SolverFactory('glpk').solve(model, tee=verbose)
 
         # model.display()
         # print(result)

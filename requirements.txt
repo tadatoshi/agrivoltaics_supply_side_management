@@ -3,12 +3,13 @@ pandas>=2.0.0
 matplotlib
 seaborn
 scikit-learn
-git+https://github.com/statsmodels/statsmodels
+statsmodels
 tensorflow
 tensorflow-probability
-pymc3
+pymc
 pvlib
 pvfactors
+bifacial_radiance
 opencv-python
 pyomo
 kneed
@@ -18,3 +19,4 @@ pytest
 hypothesis
 click
 black
+pdoc3

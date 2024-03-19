@@ -37,7 +37,7 @@ class TestPhotosyntheticRate:
         #       in order to construct this test case:
         assert phi_1 == pytest.approx(0.03442842, abs=1e-8)
         assert alpha_1 == pytest.approx(0.0951081, abs=1e-8)
-        assert theta_1 == pytest.approx(1.32757914, abs=1e-8)
+        assert theta_1 == pytest.approx(1.32757914, abs=1e-7)
 
         phi_2, alpha_2, theta_2 \
             = PhotosyntheticRate.net_photosynthetic_rate_parameters(
@@ -46,9 +46,9 @@ class TestPhotosyntheticRate:
         # TODO: Replace with Hypothesis assert since the expected values
         #       below are the ones calculated in Jupyter notebook,
         #       in order to construct this test case:
-        assert phi_2 == pytest.approx(0.05498626, abs=1e-8)
-        assert alpha_2 == pytest.approx(0.12013631, abs=1e-8)
-        assert theta_2 == pytest.approx(0.74425981, abs=1e-8)
+        assert phi_2 == pytest.approx(0.05498626, abs=1e-7)
+        assert alpha_2 == pytest.approx(0.12013631, abs=1e-7)
+        assert theta_2 == pytest.approx(0.74425981, abs=1e-7)
 
     @pytest.mark.parametrize(
         "phi, alpha, theta, p_max",

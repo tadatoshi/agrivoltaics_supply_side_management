@@ -282,3 +282,4 @@ build
 plots*/
 tensorflow_models*/
 data/~*
+data*/

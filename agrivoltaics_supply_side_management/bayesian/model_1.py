@@ -1,4 +1,4 @@
-import pymc3 as pm
+import pymc as pm
 
 
 class BayesianModel1:

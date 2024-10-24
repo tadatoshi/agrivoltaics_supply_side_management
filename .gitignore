@@ -283,3 +283,5 @@ plots*/
 tensorflow_models*/
 data/~*
 data*/
+bifacial_radiance
+.hypothesis

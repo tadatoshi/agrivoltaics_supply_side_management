@@ -8,7 +8,7 @@ tensorflow
 tensorflow-probability
 pymc
 pvlib
-solarfactors   # Needs to be used instead of pvfactors since pvlib 0.10.1. Causes and error during installation (with Python 3.12)
+# solarfactors   # Needs to be used instead of pvfactors since pvlib 0.10.1. Causes and error during installation (with Python 3.12)
 bifacial_radiance
 opencv-python
 pyomo

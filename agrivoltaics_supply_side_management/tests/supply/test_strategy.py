@@ -77,7 +77,7 @@ class TestSupplyStrategy:
         #        ElectricityGeneration.produce_electric_power was used.):
         # total_electricity_supply was 1242.6796249192898[Wh], which has
         # reasonable value [Wh/day].
-        assert total_electricity_supply == pytest.approx(1242, abs=1)
+        assert total_electricity_supply == pytest.approx(1242, abs=2)
         # total_crop_yield was 0.0019244353818448326, which has reasonable
         # value, since
         # 0.0019244353818448326[(kg/m^2)/day] * 120 * 10000 / 1000

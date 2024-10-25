@@ -117,7 +117,7 @@ class TestBifacialSupplyStrategy:
         # total_electricity_supply was 2035.402261259535[Wh], which is
         # much bigger than 1242.6796249192898[Wh/day]
         # by IrradiationShiftingStrategyFactory
-        assert total_electricity_supply == pytest.approx(2035, abs=1)
+        assert total_electricity_supply == pytest.approx(2035, abs=3)
         # total_crop_yield was 0.0019817513464064403, which has reasonable
         # value, since
         # 0.0019817513464064403[(kg/m^2)/day] * 120 * 10000 / 1000

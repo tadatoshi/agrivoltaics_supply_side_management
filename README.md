@@ -1,7 +1,7 @@
 # Agrivoltaics Supply Side Management
 
 Optimizes Supply Side Management with Agrivoltaics (Solar sharing between 
-Photovoltaics and Agriculture) by Artificial Intelligence. 
+Photovoltaics and Agriculture) by Data Science techniques. 
 
 ## Installation
 
